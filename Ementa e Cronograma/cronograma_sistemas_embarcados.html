@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma - Sistemas Embarcados I</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        h1 {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            font-size: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #003366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+            font-size: 16px;
+        }
+
+        .data {
+            background-color: #e8f4f8;
+            text-align: center;
+            font-weight: bold;
+            width: 120px;
+        }
+
+        .unidade-i {
+            background-color: #e3f2fd;
+        }
+
+        .unidade-ii {
+            background-color: #e8f5e8;
+        }
+
+        .unidade-iii {
+            background-color: #fff3e0;
+        }
+
+        .unidade-iv {
+            background-color: #fce4ec;
+        }
+
+        .unidade-v {
+            background-color: #f3e5f5;
+        }
+
+        .unidade-vi {
+            background-color: #e0f7fa;
+        }
+
+        .sem-aula {
+            background-color: #f5f5f5;
+            color: #666;
+            font-style: italic;
+        }
+
+        .avaliacao {
+            background-color: #ffebee;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            th, td {
+                font-size: 15px;
+                padding: 10px;
+            }
+            
+            .data {
+                width: 80px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistemas Embarcados I</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Conteúdo Programático</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="data">30/07</td>
+                    <td class="unidade-i">Definições do projeto da disciplina<br><strong>Unidade I:</strong> Fundamentos de sistemas embarcados com microcontroladores da família ARM. Sistemas embarcados. Processadores e Microcontroladores. Arquitetura ARM.</td>
+                </tr>
+                <tr>
+                    <td class="data">06/08</td>
+                    <td class="unidade-i"><strong>Unidade I:</strong> Famílias de tecnologias. Barramentos e periféricos. Fontes de clock.</td>
+                </tr>
+                <tr>
+                    <td class="data">13/08</td>
+                    <td class="unidade-i"><strong>Unidade I:</strong> Memórias RAM, ROM, EPROM, EEPROM e FLASH.</td>
+                </tr>
+                <tr>
+                    <td class="data">20/08</td>
+                    <td class="unidade-i"><strong>Unidade I:</strong> Revisão e aprofundamento dos conceitos fundamentais<br><strong>Checkpoint 1 do Projeto</strong></td>
+                </tr>
+                <tr>
+                    <td class="data">27/08</td>
+                    <td class="unidade-ii"><strong>Unidade II:</strong> Registradores e operadores bit-a-bit. Registradores. Ponteiros.</td>
+                </tr>
+                <tr>
+                    <td class="data">03/09</td>
+                    <td class="unidade-ii"><strong>Unidade II:</strong> Operações bit-a-bit em linguagem C. Máscaras.</td>
+                </tr>
+                <tr>
+                    <td class="data">10/09</td>
+                    <td class="unidade-ii"><strong>Unidade II:</strong> Aplicações práticas e exercícios<br><strong>Checkpoint 2 do Projeto</strong></td>
+                </tr>
+                <tr>
+                    <td class="data">17/09</td>
+                    <td class="unidade-iii"><strong>Unidade III:</strong> Pinos de entrada e saída de propósito geral (GPIO). Configuração e controle de pinos.</td>
+                </tr>
+                <tr>
+                    <td class="data">24/09</td>
+                    <td class="sem-aula">Semana Acadêmica - Sem aulas</td>
+                </tr>
+                <tr>
+                    <td class="data">01/10</td>
+                    <td class="unidade-iii"><strong>Unidade III:</strong> Interrupções. Configuração e tratamento de interrupções.</td>
+                </tr>
+                <tr>
+                    <td class="data">08/10</td>
+                    <td class="sem-aula">Feira de Profissões - Sem aulas</td>
+                </tr>
+                <tr>
+                    <td class="data">15/10</td>
+                    <td class="unidade-iii"><strong>Unidade III:</strong> Aplicações práticas com GPIO e interrupções<br><strong>Checkpoint 3 do Projeto</strong></td>
+                </tr>
+                <tr>
+                    <td class="data">22/10</td>
+                    <td class="unidade-iv"><strong>Unidade IV:</strong> Interfaces seriais síncronas e assíncronas. UART. SPI.</td>
+                </tr>
+                <tr>
+                    <td class="data">29/10</td>
+                    <td class="unidade-iv"><strong>Unidade IV:</strong> I2C e aplicações práticas<br><strong>Unidade V:</strong> Sinais analógicos e digitais. Conversão analógico-digital.</td>
+                </tr>
+                <tr>
+                    <td class="data">05/11</td>
+                    <td class="unidade-v"><strong>Unidade V:</strong> Aplicações práticas da conversão A/D<br><strong>Unidade VI:</strong> Temporizadores (Timers). SysTick Timer. Watch-dog.</td>
+                </tr>
+                <tr>
+                    <td class="data">12/11</td>
+                    <td class="unidade-vi"><strong>Unidade VI:</strong> Modulação por largura de pulso (PWM)<br><strong>Apresentação Final do Projeto</strong></td>
+                </tr>
+                <tr>
+                    <td class="data">19/11</td>
+                    <td class="avaliacao">Avaliação A1 - Semana de Provas</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

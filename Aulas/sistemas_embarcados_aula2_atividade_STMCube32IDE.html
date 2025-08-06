@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Prático - STM32F072 Nucleo com STM32CubeIDE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(30, 60, 114, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .setup-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .code-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .hal-badge {
+            background: linear-gradient(135deg, #6f42c1, #5a2d91);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .step-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 6px solid #2a5298;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .step-title {
+            color: #2a5298;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .step-description {
+            color: #444;
+            line-height: 1.7;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .theory-box {
+            background: rgba(42, 82, 152, 0.1);
+            border: 2px solid rgba(42, 82, 152, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .theory-box h4 {
+            color: #2a5298;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #2a5298;
+            position: relative;
+        }
+
+        .code-header {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 10px 20px;
+            margin: -25px -25px 15px -25px;
+            border-radius: 12px 12px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .copy-button:hover {
+            background: #1e3c72;
+        }
+
+        .hardware-box {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .hardware-header {
+            color: #ff6b35;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .highlight-box h4 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #f57c00;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-panel {
+            background: rgba(40, 167, 69, 0.1);
+            border: 2px solid rgba(40, 167, 69, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-panel h4 {
+            color: #28a745;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cubemx-box {
+            background: rgba(111, 66, 193, 0.1);
+            border: 2px solid rgba(111, 66, 193, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .cubemx-header {
+            color: #6f42c1;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+            margin: 10px 10px 10px 0;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .list {
+            margin: 15px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .list li {
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .list li::before {
+            content: '▶';
+            color: #2a5298;
+            position: absolute;
+            left: 0;
+            font-size: 14px;
+            top: 2px;
+        }
+
+        .explanation-box {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #2a5298;
+        }
+
+        .explanation-box h5 {
+            color: #2a5298;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .explanation-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .config-steps {
+            background: rgba(111, 66, 193, 0.05);
+            border: 1px solid rgba(111, 66, 193, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .config-steps h5 {
+            color: #6f42c1;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .config-steps ol {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .config-steps li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .step-container {
+                padding: 20px;
+            }
+
+            .code-block {
+                padding: 15px;
+                font-size: 12px;
+            }
+
+            .step-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .step-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        .syntax-function { color: #dcdcaa; }
+        .syntax-type { color: #4ec9b0; }
+        .syntax-define { color: #c586c0; }
+        .syntax-include { color: #c586c0; }
+        .syntax-variable { color: #9cdcfe; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge">🎯 Desenvolvimento Profissional</div>
+            <h1 class="title">STM32F072 com STM32CubeIDE</h1>
+            <p class="subtitle">Programação em C com HAL e configuração via STM32CubeMX</p>
+        </div>
+
+        <div class="highlight-box">
+            <h4>🎯 Objetivos da Atividade</h4>
+            <p>Aprender a usar as ferramentas profissionais da ST: STM32CubeIDE e STM32CubeMX. Implementar os mesmos conceitos da aula anterior (GPIO, UART, PWM) mas usando HAL (Hardware Abstraction Layer) em linguagem C, preparando para desenvolvimento profissional.</p>
+        </div>
+
+        <div class="info-panel">
+            <h4>📋 Ferramentas Necessárias</h4>
+            <ul class="list">
+                <li>STM32CubeIDE (download gratuito da ST)</li>
+                <li>Placa STM32F072RB Nucleo</li>
+                <li>Cabo USB tipo A para Mini-B</li>
+                <li>Computador com Windows/Linux/Mac</li>
+            </ul>
+        </div>
+
+        <div class="theory-box">
+            <h4>🔄 Arduino IDE vs STM32CubeIDE</h4>
+            <p><strong>Arduino IDE:</strong> Simples, abstração alta, C++ simplificado | <strong>STM32CubeIDE:</strong> Profissional, controle total, C puro, HAL layer, debugging avançado, configuração gráfica via CubeMX</p>
+        </div>
+
+        <!-- Passo 1: Setup STM32CubeIDE -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title">Instalação do STM32CubeIDE</h2>
+            </div>
+            <div class="setup-badge">⚙️ Preparação do Ambiente</div>
+            <p class="step-description">STM32CubeIDE é o IDE oficial da STMicroelectronics, baseado no Eclipse, que integra STM32CubeMX para configuração gráfica dos periféricos. É a ferramenta padrão para desenvolvimento profissional com STM32.</p>
+            
+            <div class="theory-box">
+                <h4>🛠️ O que é STM32CubeIDE?</h4>
+                <p><strong>IDE Completo:</strong> Editor, compilador, debugger integrados | <strong>CubeMX Integrado:</strong> Configuração gráfica de pinos e periféricos | <strong>HAL Driver:</strong> Biblioteca de alto nível para periféricos | <strong>Gratuito:</strong> Licença comercial livre</p>
+            </div>
+
+            <div class="config-steps">
+                <h5>📝 Instalação Passo a Passo:</h5>
+                <ol>
+                    <li>Acesse: <strong>st.com/stm32cubeide</strong></li>
+                    <li>Faça download para seu sistema operacional</li>
+                    <li>Execute o instalador (requer registro gratuito ST)</li>
+                    <li>Instale com configurações padrão</li>
+                    <li>Abra STM32CubeIDE e defina workspace</li>
+                </ol>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Requisitos do Sistema</h4>
+                <p><strong>RAM:</strong> Mínimo 4GB (recomendado 8GB+) | <strong>Espaço:</strong> ~3GB | <strong>Java:</strong> Incluído na instalação | <strong>ST-Link:</strong> Drivers instalados automaticamente</p>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Primeira inicialização:</h5>
+                <p><strong>Workspace:</strong> Diretório onde ficarão seus projetos (ex: C:\STM32_Projects) | <strong>Welcome Screen:</strong> Pode ser fechada | <strong>Perspectiva:</strong> Use "STM32" perspective para desenvolvimento</p>
+            </div>
+        </div>
+
+        <!-- Passo 2: Criar Primeiro Projeto -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title">Criando o Primeiro Projeto</h2>
+            </div>
+            <div class="hal-badge">🎯 STM32CubeMX</div>
+            <p class="step-description">Vamos criar nosso primeiro projeto usando STM32CubeMX integrado. Esta ferramenta permite configurar graficamente todos os periféricos do microcontrolador e gera automaticamente o código de inicialização.</p>
+            
+            <div class="theory-box">
+                <h4>🎨 STM32CubeMX - Configurador Gráfico</h4>
+                <p><strong>Pinout View:</strong> Configura função de cada pino | <strong>Clock Configuration:</strong> Define frequências dos clocks | <strong>Periféricos:</strong> Configuração detalhada de cada módulo | <strong>Code Generation:</strong> Gera código HAL automaticamente</p>
+            </div>
+
+            <div class="config-steps">
+                <h5>🏗️ Criando Projeto LED Piscante:</h5>
+                <ol>
+                    <li><strong>File → New → STM32 Project</strong></li>
+                    <li><strong>Board Selector → NUCLEO-F072RB</strong> (ou Commercial Part Number: STM32F072RBTx)</li>
+                    <li><strong>Project Name:</strong> "LED_Blink_HAL"</li>
+                    <li><strong>Targeted Language:</strong> C</li>
+                    <li>Clique <strong>Finish</strong> (abre STM32CubeMX automaticamente)</li>
+                </ol>
+            </div>
+
+            <div class="cubemx-box">
+                <div class="cubemx-header">⚙️ Configuração no CubeMX</div>
+                <strong>1. Pinout Configuration:</strong><br>
+                • PA5 já está configurado como GPIO_Output (LED2)<br>
+                • PC13 já está configurado como GPIO_Input (USER_BTN)<br><br>
+                <strong>2. Clock Configuration:</strong><br>
+                • HSI 8MHz → PLL → SYSCLK 48MHz (padrão OK)<br><br>
+                <strong>3. Project Manager:</strong><br>
+                • Code Generator → Generate peripheral initialization as pair of .c/.h files
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Gerar Código:</h5>
+                <p><strong>Ctrl+S ou File → Save:</strong> Salva configuração e gera código | <strong>Arquivos Gerados:</strong> main.c, stm32f0xx_hal_msp.c, vários headers | <strong>USER CODE sections:</strong> Onde você coloca seu código</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Verificação</h4>
+                <p>Após gerar código, você deve ver na árvore de projeto:<br>
+                <strong>Core/Src/main.c</strong> - Arquivo principal<br>
+                <strong>Core/Inc/main.h</strong> - Headers<br>
+                <strong>Drivers/</strong> - Bibliotecas HAL</p>
+            </div>
+        </div>
+
+        <!-- Passo 3: LED Piscante em HAL -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title">Exemplo 1: LED Piscante com HAL</h2>
+            </div>
+            <div class="code-badge">💡 GPIO HAL</div>
+            <p class="step-description">Implementaremos LED piscante usando HAL (Hardware Abstraction Layer). O HAL oferece funções de alto nível para controlar periféricos, mantendo compatibilidade entre diferentes microcontroladores STM32.</p>
+            
+            <div class="theory-box">
+                <h4>🔌 HAL GPIO Functions</h4>
+                <p><strong>HAL_GPIO_WritePin():</strong> Escreve estado em pino específico | <strong>HAL_GPIO_TogglePin():</strong> Inverte estado do pino | <strong>HAL_Delay():</strong> Delay em millisegundos | <strong>GPIO_PIN_SET/RESET:</strong> Estados lógicos</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>💡 main.c - LED Piscante</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/* USER CODE BEGIN Header */</span>
+<span class="syntax-comment">/**
+  * STM32F072 Nucleo - LED Piscante com HAL
+  * LED2 (PA5) piscando a cada 1 segundo
+  */</span>
+<span class="syntax-comment">/* USER CODE END Header */</span>
+
+<span class="syntax-comment">/* Includes ------------------------------------------------------------------*/</span>
+<span class="syntax-include">#include</span> <span class="syntax-string">"main.h"</span>
+
+<span class="syntax-comment">/* Private variables ---------------------------------------------------------*/</span>
+
+<span class="syntax-comment">/* USER CODE BEGIN PV */</span>
+
+<span class="syntax-comment">/* USER CODE END PV */</span>
+
+<span class="syntax-comment">/* Private function prototypes -----------------------------------------------*/</span>
+<span class="syntax-type">void</span> <span class="syntax-function">SystemClock_Config</span>(<span class="syntax-type">void</span>);
+<span class="syntax-type">static void</span> <span class="syntax-function">MX_GPIO_Init</span>(<span class="syntax-type">void</span>);
+
+<span class="syntax-comment">/* USER CODE BEGIN PFP */</span>
+
+<span class="syntax-comment">/* USER CODE END PFP */</span>
+
+<span class="syntax-comment">/**
+  * @brief  The application entry point.
+  * @retval int
+  */</span>
+<span class="syntax-type">int</span> <span class="syntax-function">main</span>(<span class="syntax-type">void</span>)
+{
+  <span class="syntax-comment">/* USER CODE BEGIN 1 */</span>
+
+  <span class="syntax-comment">/* USER CODE END 1 */</span>
+
+  <span class="syntax-comment">/* MCU Configuration--------------------------------------------------------*/</span>
+
+  <span class="syntax-comment">/* Reset of all peripherals, Initializes the Flash interface and the Systick. */</span>
+  <span class="syntax-function">HAL_Init</span>();
+
+  <span class="syntax-comment">/* Configure the system clock */</span>
+  <span class="syntax-function">SystemClock_Config</span>();
+
+  <span class="syntax-comment">/* Initialize all configured peripherals */</span>
+  <span class="syntax-function">MX_GPIO_Init</span>();
+
+  <span class="syntax-comment">/* USER CODE BEGIN 2 */</span>
+  
+  <span class="syntax-comment">// LED inicia desligado</span>
+  <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_RESET</span>);
+
+  <span class="syntax-comment">/* USER CODE END 2 */</span>
+
+  <span class="syntax-comment">/* Infinite loop */</span>
+  <span class="syntax-comment">/* USER CODE BEGIN WHILE */</span>
+  <span class="syntax-keyword">while</span> (<span class="syntax-number">1</span>)
+  {
+    <span class="syntax-comment">/* USER CODE END WHILE */</span>
+
+    <span class="syntax-comment">/* USER CODE BEGIN 3 */</span>
+    
+    <span class="syntax-comment">// Liga LED2 (PA5)</span>
+    <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_SET</span>);
+    <span class="syntax-function">HAL_Delay</span>(<span class="syntax-number">1000</span>);  <span class="syntax-comment">// Aguarda 1 segundo</span>
+    
+    <span class="syntax-comment">// Desliga LED2</span>
+    <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_RESET</span>);
+    <span class="syntax-function">HAL_Delay</span>(<span class="syntax-number">1000</span>);  <span class="syntax-comment">// Aguarda 1 segundo</span>
+    
+    <span class="syntax-comment">// Alternativa mais concisa:</span>
+    <span class="syntax-comment">// HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);</span>
+    <span class="syntax-comment">// HAL_Delay(1000);</span>
+    
+  }
+  <span class="syntax-comment">/* USER CODE END 3 */</span>
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Diferenças do Arduino IDE:</h5>
+                <p><strong>HAL_Init():</strong> Inicialização do HAL e SysTick | <strong>SystemClock_Config():</strong> Configuração automática de clocks | <strong>MX_GPIO_Init():</strong> Configuração automática de GPIO | <strong>LD2_Pin/LD2_GPIO_Port:</strong> Definições automáticas do CubeMX</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Compilar e Upload</h4>
+                <p><strong>1.</strong> Clique no martelo (Build) ou Ctrl+B<br>
+                <strong>2.</strong> Conecte Nucleo via USB<br>
+                <strong>3.</strong> Clique na seta verde (Run) ou F11<br>
+                <strong>4.</strong> LED2 verde deve piscar a cada 1 segundo</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ USER CODE Sections</h4>
+                <p>IMPORTANTE: Sempre coloque seu código entre <strong>/* USER CODE BEGIN */</strong> e <strong>/* USER CODE END */</strong>. Código fora dessas seções será apagado quando regenerar pelo CubeMX!</p>
+            </div>
+        </div>
+
+        <!-- Passo 4: Botão com HAL -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title">Exemplo 2: Entrada Digital com HAL</h2>
+            </div>
+            <div class="code-badge">🔲 GPIO Input</div>
+            <p class="step-description">Implementaremos leitura do botão USER usando HAL. Demonstra como ler estados de GPIO e implementar debounce simples, conceitos fundamentais para interfaces de usuário.</p>
+            
+            <div class="theory-box">
+                <h4>📖 HAL GPIO Input</h4>
+                <p><strong>HAL_GPIO_ReadPin():</strong> Lê estado de pino de entrada | <strong>GPIO_PIN_SET/RESET:</strong> Estados retornados | <strong>Debounce:</strong> Necessário para botões mecânicos | <strong>Pull-up/Pull-down:</strong> Configurado no CubeMX</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>🔲 main.c - Botão Controla LED</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/* USER CODE BEGIN 2 */</span>
+
+<span class="syntax-comment">// Variáveis para controle do botão</span>
+<span class="syntax-type">uint8_t</span> ledState = <span class="syntax-number">0</span>;                    <span class="syntax-comment">// Estado atual do LED</span>
+<span class="syntax-variable">GPIO_PinState</span> lastButtonState = <span class="syntax-variable">GPIO_PIN_SET</span>;  <span class="syntax-comment">// Estado anterior do botão</span>
+<span class="syntax-type">uint32_t</span> lastDebounceTime = <span class="syntax-number">0</span>;           <span class="syntax-comment">// Tempo do último debounce</span>
+<span class="syntax-type">const uint32_t</span> debounceDelay = <span class="syntax-number">50</span>;       <span class="syntax-comment">// 50ms de debounce</span>
+
+<span class="syntax-comment">// LED inicia desligado</span>
+<span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_RESET</span>);
+
+<span class="syntax-comment">/* USER CODE END 2 */</span>
+
+<span class="syntax-comment">/* USER CODE BEGIN WHILE */</span>
+<span class="syntax-keyword">while</span> (<span class="syntax-number">1</span>)
+{
+  <span class="syntax-comment">/* USER CODE END WHILE */</span>
+
+  <span class="syntax-comment">/* USER CODE BEGIN 3 */</span>
+  
+  <span class="syntax-comment">// Ler estado atual do botão USER</span>
+  <span class="syntax-variable">GPIO_PinState</span> currentButtonState = <span class="syntax-function">HAL_GPIO_ReadPin</span>(<span class="syntax-variable">B1_GPIO_Port</span>, <span class="syntax-variable">B1_Pin</span>);
+  
+  <span class="syntax-comment">// Verificar se houve mudança de estado</span>
+  <span class="syntax-keyword">if</span> (currentButtonState != lastButtonState) {
+    lastDebounceTime = <span class="syntax-function">HAL_GetTick</span>();  <span class="syntax-comment">// Pegar timestamp atual</span>
+  }
+  
+  <span class="syntax-comment">// Se passou o tempo de debounce</span>
+  <span class="syntax-keyword">if</span> ((<span class="syntax-function">HAL_GetTick</span>() - lastDebounceTime) > debounceDelay) {
+    <span class="syntax-comment">// Verificar se botão foi pressionado (HIGH → LOW)</span>
+    <span class="syntax-keyword">if</span> (lastButtonState == <span class="syntax-variable">GPIO_PIN_SET</span> && currentButtonState == <span class="syntax-variable">GPIO_PIN_RESET</span>) {
+      <span class="syntax-comment">// Inverter estado do LED</span>
+      ledState = !ledState;
+      
+      <span class="syntax-keyword">if</span> (ledState) {
+        <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_SET</span>);
+      } <span class="syntax-keyword">else</span> {
+        <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_RESET</span>);
+      }
+    }
+    
+    <span class="syntax-comment">// Atualizar estado anterior</span>
+    lastButtonState = currentButtonState;
+  }
+  
+  <span class="syntax-comment">// Pequeno delay para não sobrecarregar CPU</span>
+  <span class="syntax-function">HAL_Delay</span>(<span class="syntax-number">10</span>);
+
+<span class="syntax-comment">/* USER CODE END 3 */</span>
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Conceitos HAL demonstrados:</h5>
+                <p><strong>HAL_GetTick():</strong> Retorna timestamp em ms desde inicialização | <strong>GPIO_PinState:</strong> Enum para estados de pino | <strong>B1_Pin/B1_GPIO_Port:</strong> Botão USER definido pelo CubeMX | <strong>Debounce Temporal:</strong> Mais preciso que delays fixos</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Teste Prático</h4>
+                <p><strong>1.</strong> Compile e faça upload<br>
+                <strong>2.</strong> Pressione o botão azul USER da placa<br>
+                <strong>3.</strong> LED2 verde deve alternar ON/OFF a cada pressão<br>
+                <strong>4.</strong> Resposta deve ser estável (sem múltiplas detecções)</p>
+            </div>
+        </div>
+
+        <!-- Passo 5: UART com HAL -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <h2 class="step-title">Exemplo 3: Comunicação UART</h2>
+            </div>
+            <div class="hal-badge">📡 UART HAL</div>
+            <p class="step-description">Implementaremos comunicação serial usando UART2 e HAL. Primeiro precisamos habilitar UART2 no CubeMX, depois usar as funções HAL para comunicação bidirecional.</p>
+            
+            <div class="theory-box">
+                <h4>📡 HAL UART Functions</h4>
+                <p><strong>HAL_UART_Transmit():</strong> Envia dados via UART | <strong>HAL_UART_Receive():</strong> Recebe dados | <strong>printf redirection:</strong> Redirecionar printf para UART | <strong>Polling vs Interrupt:</strong> Modos de operação</p>
+            </div>
+
+            <div class="cubemx-box">
+                <div class="cubemx-header">⚙️ Configurar UART2 no CubeMX</div>
+                <strong>1. Abrir CubeMX:</strong> Duplo clique no arquivo .ioc<br>
+                <strong>2. Connectivity → USART2:</strong><br>
+                • Mode: Asynchronous<br>
+                • Baud Rate: 115200<br>
+                • Word Length: 8 Bits<br>
+                • Parity: None<br>
+                • Stop Bits: 1<br><br>
+                <strong>3. Salvar:</strong> Ctrl+S para gerar código
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📡 main.c - UART com printf</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/* Includes ------------------------------------------------------------------*/</span>
+<span class="syntax-include">#include</span> <span class="syntax-string">"main.h"</span>
+<span class="syntax-include">#include</span> <span class="syntax-string">&lt;stdio.h&gt;</span>     <span class="syntax-comment">// Para printf</span>
+<span class="syntax-include">#include</span> <span class="syntax-string">&lt;string.h&gt;</span>    <span class="syntax-comment">// Para string functions</span>
+
+<span class="syntax-comment">/* Private variables ---------------------------------------------------------*/</span>
+<span class="syntax-variable">UART_HandleTypeDef</span> huart2;
+
+<span class="syntax-comment">/* USER CODE BEGIN PV */</span>
+
+<span class="syntax-comment">// Buffer para recepção de comandos</span>
+<span class="syntax-type">char</span> rxBuffer[<span class="syntax-number">100</span>];
+<span class="syntax-type">uint8_t</span> rxData;
+<span class="syntax-type">uint8_t</span> rxIndex = <span class="syntax-number">0</span>;
+<span class="syntax-type">uint8_t</span> cmdReady = <span class="syntax-number">0</span>;
+<span class="syntax-type">uint8_t</span> ledState = <span class="syntax-number">0</span>;
+
+<span class="syntax-comment">/* USER CODE END PV */</span>
+
+<span class="syntax-comment">/* Private function prototypes -----------------------------------------------*/</span>
+<span class="syntax-type">void</span> <span class="syntax-function">SystemClock_Config</span>(<span class="syntax-type">void</span>);
+<span class="syntax-type">static void</span> <span class="syntax-function">MX_GPIO_Init</span>(<span class="syntax-type">void</span>);
+<span class="syntax-type">static void</span> <span class="syntax-function">MX_USART2_UART_Init</span>(<span class="syntax-type">void</span>);
+
+<span class="syntax-comment">/* USER CODE BEGIN PFP */</span>
+
+<span class="syntax-comment">// Redirecionar printf para UART2</span>
+<span class="syntax-type">int</span> <span class="syntax-function">__io_putchar</span>(<span class="syntax-type">int</span> ch) {
+  <span class="syntax-function">HAL_UART_Transmit</span>(&amp;huart2, (<span class="syntax-type">uint8_t</span>*)&amp;ch, <span class="syntax-number">1</span>, <span class="syntax-variable">HAL_MAX_DELAY</span>);
+  <span class="syntax-keyword">return</span> ch;
+}
+
+<span class="syntax-comment">// Processar comandos recebidos</span>
+<span class="syntax-type">void</span> <span class="syntax-function">processCommand</span>(<span class="syntax-type">char</span>* cmd) {
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">strcmp</span>(cmd, <span class="syntax-string">"ON"</span>) == <span class="syntax-number">0</span>) {
+    ledState = <span class="syntax-number">1</span>;
+    <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_SET</span>);
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"LED ligado\\r\\n"</span>);
+  }
+  <span class="syntax-keyword">else if</span> (<span class="syntax-function">strcmp</span>(cmd, <span class="syntax-string">"OFF"</span>) == <span class="syntax-number">0</span>) {
+    ledState = <span class="syntax-number">0</span>;
+    <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_RESET</span>);
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"LED desligado\\r\\n"</span>);
+  }
+  <span class="syntax-keyword">else if</span> (<span class="syntax-function">strcmp</span>(cmd, <span class="syntax-string">"STATUS"</span>) == <span class="syntax-number">0</span>) {
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"LED: %s\\r\\n"</span>, ledState ? <span class="syntax-string">"ON"</span> : <span class="syntax-string">"OFF"</span>);
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"Uptime: %lu ms\\r\\n"</span>, <span class="syntax-function">HAL_GetTick</span>());
+  }
+  <span class="syntax-keyword">else</span> {
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"Comando nao reconhecido: %s\\r\\n"</span>, cmd);
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"Use: ON, OFF, STATUS\\r\\n"</span>);
+  }
+}
+
+<span class="syntax-comment">/* USER CODE END PFP */</span>
+
+<span class="syntax-comment">/**
+  * @brief  The application entry point.
+  * @retval int
+  */</span>
+<span class="syntax-type">int</span> <span class="syntax-function">main</span>(<span class="syntax-type">void</span>)
+{
+  <span class="syntax-comment">/* MCU Configuration--------------------------------------------------------*/</span>
+  <span class="syntax-function">HAL_Init</span>();
+  <span class="syntax-function">SystemClock_Config</span>();
+  <span class="syntax-function">MX_GPIO_Init</span>();
+  <span class="syntax-function">MX_USART2_UART_Init</span>();
+
+  <span class="syntax-comment">/* USER CODE BEGIN 2 */</span>
+  
+  <span class="syntax-comment">// Mensagem de boas-vindas</span>
+  <span class="syntax-function">printf</span>(<span class="syntax-string">"\\r\\n========================================\\r\\n"</span>);
+  <span class="syntax-function">printf</span>(<span class="syntax-string">"STM32F072 Nucleo - Interface UART HAL\\r\\n"</span>);
+  <span class="syntax-function">printf</span>(<span class="syntax-string">"========================================\\r\\n"</span>);
+  <span class="syntax-function">printf</span>(<span class="syntax-string">"Comandos: ON, OFF, STATUS\\r\\n"</span>);
+  <span class="syntax-function">printf</span>(<span class="syntax-string">"Digite comando e pressione Enter\\r\\n\\r\\n"</span>);
+  
+  <span class="syntax-comment">// LED inicia desligado</span>
+  <span class="syntax-function">HAL_GPIO_WritePin</span>(<span class="syntax-variable">LD2_GPIO_Port</span>, <span class="syntax-variable">LD2_Pin</span>, <span class="syntax-variable">GPIO_PIN_RESET</span>);
+
+  <span class="syntax-comment">/* USER CODE END 2 */</span>
+
+  <span class="syntax-comment">/* Infinite loop */</span>
+  <span class="syntax-comment">/* USER CODE BEGIN WHILE */</span>
+  <span class="syntax-keyword">while</span> (<span class="syntax-number">1</span>)
+  {
+    <span class="syntax-comment">/* USER CODE END WHILE */</span>
+
+    <span class="syntax-comment">/* USER CODE BEGIN 3 */</span>
+    
+    <span class="syntax-comment">// Receber dados da UART (timeout 10ms)</span>
+    <span class="syntax-keyword">if</span> (<span class="syntax-function">HAL_UART_Receive</span>(&amp;huart2, &amp;rxData, <span class="syntax-number">1</span>, <span class="syntax-number">10</span>) == <span class="syntax-variable">HAL_OK</span>) {
+      <span class="syntax-keyword">if</span> (rxData == <span class="syntax-string">'\\r'</span> || rxData == <span class="syntax-string">'\\n'</span>) {
+        <span class="syntax-comment">// Fim de comando</span>
+        <span class="syntax-keyword">if</span> (rxIndex > <span class="syntax-number">0</span>) {
+          rxBuffer[rxIndex] = <span class="syntax-string">'\\0'</span>;  <span class="syntax-comment">// Terminar string</span>
+          <span class="syntax-function">processCommand</span>(rxBuffer);
+          rxIndex = <span class="syntax-number">0</span>;  <span class="syntax-comment">// Reset buffer</span>
+        }
+      } <span class="syntax-keyword">else if</span> (rxIndex < <span class="syntax-keyword">sizeof</span>(rxBuffer) - <span class="syntax-number">1</span>) {
+        <span class="syntax-comment">// Adicionar caractere ao buffer</span>
+        rxBuffer[rxIndex++] = rxData;
+      }
+    }
+    
+  <span class="syntax-comment">/* USER CODE END 3 */</span>
+  }
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 HAL UART em detalhes:</h5>
+                <p><strong>__io_putchar():</strong> Redireciona printf para UART2 | <strong>HAL_UART_Receive():</strong> Recebe com timeout (não bloqueia) | <strong>huart2:</strong> Handle da UART2 gerado pelo CubeMX | <strong>String Processing:</strong> Coleta caracteres até CR/LF</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Como Testar</h4>
+                <p><strong>1.</strong> Compile e upload<br>
+                <strong>2.</strong> Abra terminal serial (115200 baud): PuTTY, Tera Term, etc.<br>
+                <strong>3.</strong> Digite comandos: "ON", "OFF", "STATUS"<br>
+                <strong>4.</strong> Pressione Enter após cada comando</p>
+            </div>
+        </div>
+
+        <!-- Passo 6: PWM com HAL -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <h2 class="step-title">Exemplo 4: PWM com HAL</h2>
+            </div>
+            <div class="hal-badge">⚡ Timer PWM</div>
+            <p class="step-description">Implementaremos PWM usando Timer e HAL. Primeiro configuraremos TIM2 no CubeMX para gerar PWM no pino PA5 (LED2), demonstrando controle de brilho.</p>
+            
+            <div class="theory-box">
+                <h4>⚡ HAL Timer PWM</h4>
+                <p><strong>HAL_TIM_PWM_Start():</strong> Inicia geração PWM | <strong>__HAL_TIM_SET_COMPARE():</strong> Altera duty cycle | <strong>Timer Configuration:</strong> Prescaler, Period, Pulse | <strong>Channel Selection:</strong> Timer pode ter múltiplos canais PWM</p>
+            </div>
+
+            <div class="cubemx-box">
+                <div class="cubemx-header">⚙️ Configurar Timer PWM no CubeMX</div>
+                <strong>1. Pinout & Configuration:</strong><br>
+                • PA5 → clique e selecione TIM2_CH1<br><br>
+                <strong>2. Timers → TIM2:</strong><br>
+                • Clock Source: Internal Clock<br>
+                • Channel1: PWM Generation CH1<br><br>
+                <strong>3. Configuration:</strong><br>
+                • Prescaler: 47 (48MHz/48 = 1MHz timer clock)<br>
+                • Period: 999 (1MHz/1000 = 1kHz PWM)<br>
+                • Pulse: 500 (50% duty cycle inicial)<br><br>
+                <strong>4. Salvar:</strong> Ctrl+S para gerar código
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>⚡ main.c - PWM Breathing Effect</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/* Private variables ---------------------------------------------------------*/</span>
+<span class="syntax-variable">TIM_HandleTypeDef</span> htim2;
+
+<span class="syntax-comment">/* USER CODE BEGIN PV */</span>
+
+<span class="syntax-type">uint16_t</span> brightness = <span class="syntax-number">0</span>;      <span class="syntax-comment">// Brilho atual (0-999)</span>
+<span class="syntax-type">int16_t</span> fadeDirection = <span class="syntax-number">5</span>;   <span class="syntax-comment">// Direção e velocidade do fade</span>
+
+<span class="syntax-comment">/* USER CODE END PV */</span>
+
+<span class="syntax-comment">/* USER CODE BEGIN 2 */</span>
+
+<span class="syntax-comment">// Inicializar PWM no Timer 2, Canal 1</span>
+<span class="syntax-function">HAL_TIM_PWM_Start</span>(&amp;htim2, <span class="syntax-variable">TIM_CHANNEL_1</span>);
+
+<span class="syntax-comment">// Configurar duty cycle inicial (0%)</span>
+<span class="syntax-function">__HAL_TIM_SET_COMPARE</span>(&amp;htim2, <span class="syntax-variable">TIM_CHANNEL_1</span>, <span class="syntax-number">0</span>);
+
+<span class="syntax-function">printf</span>(<span class="syntax-string">"\\r\\nSTM32F072 - PWM Breathing Effect\\r\\n"</span>);
+<span class="syntax-function">printf</span>(<span class="syntax-string">"Observe LED2 fazendo efeito de respiracao...\\r\\n\\r\\n"</span>);
+
+<span class="syntax-comment">/* USER CODE END 2 */</span>
+
+<span class="syntax-comment">/* USER CODE BEGIN WHILE */</span>
+<span class="syntax-keyword">while</span> (<span class="syntax-number">1</span>)
+{
+  <span class="syntax-comment">/* USER CODE END WHILE */</span>
+
+  <span class="syntax-comment">/* USER CODE BEGIN 3 */</span>
+  
+  <span class="syntax-comment">// Atualizar duty cycle do PWM</span>
+  <span class="syntax-function">__HAL_TIM_SET_COMPARE</span>(&amp;htim2, <span class="syntax-variable">TIM_CHANNEL_1</span>, brightness);
+  
+  <span class="syntax-comment">// Atualizar brilho</span>
+  brightness += fadeDirection;
+  
+  <span class="syntax-comment">// Verificar limites e inverter direção</span>
+  <span class="syntax-keyword">if</span> (brightness >= <span class="syntax-number">999</span>) {
+    brightness = <span class="syntax-number">999</span>;
+    fadeDirection = -<span class="syntax-number">5</span>;  <span class="syntax-comment">// Começar a diminuir</span>
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"Brilho maximo (100%%)\\r\\n"</span>);
+  }
+  <span class="syntax-keyword">else if</span> (brightness <= <span class="syntax-number">0</span>) {
+    brightness = <span class="syntax-number">0</span>;
+    fadeDirection = <span class="syntax-number">5</span>;   <span class="syntax-comment">// Começar a aumentar</span>
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"Brilho minimo (0%%)\\r\\n"</span>);
+  }
+  
+  <span class="syntax-comment">// Mostrar progresso ocasionalmente</span>
+  <span class="syntax-type">static uint32_t</span> lastPrint = <span class="syntax-number">0</span>;
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">HAL_GetTick</span>() - lastPrint > <span class="syntax-number">500</span>) {  <span class="syntax-comment">// A cada 500ms</span>
+    <span class="syntax-function">printf</span>(<span class="syntax-string">"Duty Cycle: %d%% (raw: %d/999)\\r\\n"</span>, 
+           (brightness * <span class="syntax-number">100</span>) / <span class="syntax-number">999</span>, brightness);
+    lastPrint = <span class="syntax-function">HAL_GetTick</span>();
+  }
+  
+  <span class="syntax-comment">// Delay para controlar velocidade do efeito</span>
+  <span class="syntax-function">HAL_Delay</span>(<span class="syntax-number">20</span>);
+
+<span class="syntax-comment">/* USER CODE END 3 */</span>
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 HAL Timer PWM detalhado:</h5>
+                <p><strong>HAL_TIM_PWM_Start():</strong> Ativa geração PWM no canal especificado | <strong>__HAL_TIM_SET_COMPARE():</strong> Macro para alterar duty cycle rapidamente | <strong>Period 999:</strong> Resolução de 1000 níveis (0-999) | <strong>Frequência:</strong> 48MHz / 48 / 1000 = 1kHz</p>
+            </div>
+
+            <div class="hardware-box">
+                <div class="hardware-header">⚡ Medição com Multímetro</div>
+                <strong>Tensão DC no LED2 (PA5):</strong><br>
+                • 0% duty cycle → ~0V<br>
+                • 50% duty cycle → ~1.65V<br>
+                • 100% duty cycle → ~3.3V<br>
+                • Valor médio muda conforme PWM!
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Resultado Esperado</h4>
+                <p>LED2 fará efeito suave de "respiração". No terminal serial, você verá o progresso do duty cycle. Com multímetro em DC, poderá medir a tensão média variando conforme o PWM.</p>
+            </div>
+        </div>
+
+        <!-- Debug e Troubleshooting -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">🔧</div>
+                <h2 class="step-title">Debug e Troubleshooting</h2>
+            </div>
+            <div class="setup-badge">🐛 Debug Avançado</div>
+            <p class="step-description">O STM32CubeIDE oferece ferramentas profissionais de debug. Aprenda a usar breakpoints, watch variables e análise de código em tempo real - recursos não disponíveis no Arduino IDE.</p>
+            
+            <div class="theory-box">
+                <h4>🔍 Ferramentas de Debug</h4>
+                <p><strong>ST-Link Debugger:</strong> Debug via SWD integrado | <strong>Breakpoints:</strong> Para execução em pontos específicos | <strong>Watch Variables:</strong> Monitora valores em tempo real | <strong>Memory View:</strong> Inspeção direta da memória</p>
+            </div>
+
+            <div class="config-steps">
+                <h5>🐛 Como usar Debug:</h5>
+                <ol>
+                    <li><strong>Inserir Breakpoint:</strong> Duplo clique na margem esquerda do código</li>
+                    <li><strong>Iniciar Debug:</strong> Clique no inseto verde ou F11</li>
+                    <li><strong>Step Over:</strong> F6 executa linha por linha</li>
+                    <li><strong>Step Into:</strong> F5 entra em funções</li>
+                    <li><strong>Continue:</strong> F8 continua até próximo breakpoint</li>
+                    <li><strong>Watch Variables:</strong> Aba "Variables" mostra valores atuais</li>
+                </ol>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Problemas Comuns</h4>
+                <ul class="list">
+                    <li><strong>Código não compila:</strong> Verifique USER CODE sections</li>
+                    <li><strong>Debugger não conecta:</strong> Reconecte USB, restart CubeIDE</li>
+                    <li><strong>UART não funciona:</strong> Verifique baud rate no terminal</li>
+                    <li><strong>PWM não gera sinal:</strong> Verifique configuração de pino no CubeMX</li>
+                    <li><strong>CubeMX não gera código:</strong> Salve projeto antes de gerar</li>
+                </ul>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Dicas Profissionais:</h5>
+                <p><strong>Build Clean:</strong> Project → Clean para recompilar tudo | <strong>Regenerar Código:</strong> Altere .ioc e salve para atualizar | <strong>Printf Performance:</strong> Use DMA para UART em produção | <strong>Backup:</strong> Salve USER CODE antes de regenerar</p>
+            </div>
+        </div>
+
+        <!-- Comparação e Próximos Passos -->
+        <div class="highlight-box">
+            <h4>🎉 Parabéns!</h4>
+            <p>Você implementou com sucesso os mesmos conceitos da atividade anterior, mas usando ferramentas profissionais! Agora conhece HAL (Hardware Abstraction Layer), STM32CubeMX, e debug avançado - competências valorizadas na indústria.</p>
+        </div>
+
+        <div class="theory-box">
+            <h4>⚖️ Arduino IDE vs STM32CubeIDE - Comparação Final</h4>
+            <p><strong>Arduino IDE:</strong> Rápido para protótipos, curva de aprendizado baixa, comunidade ativa | <strong>STM32CubeIDE:</strong> Controle total, debug profissional, configuração gráfica, código otimizado, preparação para indústria</p>
+        </div>
+
+        <div class="info-panel">
+            <h4>🚀 Próximos Passos</h4>
+            <p><strong>Projetos Avançados:</strong> Interrupts, DMA, Low Power modes | <strong>RTOS:</strong> FreeRTOS integrado ao CubeIDE | <strong>Middlewares:</strong> USB, TCP/IP, File Systems | <strong>Certificação:</strong> ST oferece cursos oficiais gratuitos</p>
+        </div>
+
+        <div class="warning-box">
+            <h4>💡 Dica para Estudos</h4>
+            <p>Continue praticando com <strong>ambas as ferramentas</strong>: Arduino IDE para prototipagem rápida e testes, STM32CubeIDE para projetos sérios e aprendizado profundo. Cada uma tem seu lugar no desenvolvimento embarcado!</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://www.st.com/en/development-tools/stm32cubeide.html" target="_blank" class="button">📥 Download STM32CubeIDE</a>
+            <a href="https://wiki.st.com/stm32mcu/" target="_blank" class="button">📚 Wiki STM32</a>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('pre code').textContent;
+            
+            navigator.clipboard.writeText(code).then(function() {
+                button.textContent = 'Copiado!';
+                button.style.background = '#4caf50';
+                
+                setTimeout(function() {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#2a5298';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                button.textContent = 'Erro';
+                button.style.background = '#f44336';
+                
+                setTimeout(function() {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#2a5298';
+                }, 2000);
+            });
+        }
+
+        // Animação suave dos elementos ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.step-container, .highlight-box, .warning-box');
+            
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>

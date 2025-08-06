@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Embarcados I - Aula 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            color: #1d1d1f;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 60px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .slide-number {
+            color: #2a5298;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .slide-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .slide-subtitle {
+            font-size: 1.4rem;
+            color: #86868b;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .content-section h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-section h3 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+        }
+
+        .content-section p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #424245;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2a5298, #1e3c72);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(42, 82, 152, 0.1);
+        }
+
+        .card h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: #424245;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(42, 82, 152, 0.1);
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .card ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #2a5298;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        .highlight-box p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            position: relative;
+        }
+
+        .comparison-card h4 {
+            color: #2a5298;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #424245;
+            font-weight: 500;
+        }
+
+        .architecture-diagram {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            text-align: center;
+        }
+
+        .protocol-table {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+        }
+
+        .protocol-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .protocol-table th {
+            background: #2a5298;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .protocol-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(42, 82, 152, 0.1);
+        }
+
+        .protocol-table tr:hover {
+            background: rgba(42, 82, 152, 0.05);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(42, 82, 152, 0.9);
+            backdrop-filter: blur(20px);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(134, 134, 139, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            color: #2a5298;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(42, 82, 152, 0.2);
+        }
+
+        .code-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .discussion-box {
+            background: rgba(42, 82, 152, 0.05);
+            border: 2px solid rgba(42, 82, 152, 0.2);
+            border-radius: 16px;
+            padding: 35px;
+            margin: 30px 0;
+        }
+
+        .discussion-box h4 {
+            color: #2a5298;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                width: 95%;
+                padding: 30px;
+                height: 90vh;
+            }
+            
+            .slide-title {
+                font-size: 2.5rem;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .navigation {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .slide-counter {
+                bottom: 20px;
+                left: 20px;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active .content-section {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+
+        <!-- Slide 1: Título da Aula -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="slide-number">Aula 02 - 06/08</div>
+                <h1 class="slide-title">Famílias de Tecnologias</h1>
+                <p class="slide-subtitle">Barramentos, Periféricos e Fontes de Clock</p>
+            </div>
+            
+            <div class="architecture-diagram">
+                <h3 style="color: #2a5298; margin-bottom: 20px;">Unidade I - Continuação</h3>
+                <p style="color: #86868b; font-size: 1.2rem;">Aprofundando os conceitos fundamentais</p>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>Objetivos da Aula</h3>
+                <p>Compreender as diferentes famílias de microcontroladores ARM, entender a arquitetura interna de barramentos e periféricos, e dominar os conceitos de gerenciamento de clock em sistemas embarcados.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Revisão Rápida -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Revisão</div>
+                <h1 class="slide-title">Revisão da Aula Anterior</h1>
+                <p class="slide-subtitle">Consolidando os conceitos básicos</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🎯 Sistemas Embarcados</h4>
+                        <p>Sistemas dedicados a funções específicas, com recursos limitados e alta confiabilidade, integrados a sistemas maiores.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 Microcontroladores</h4>
+                        <p>Sistema completo em um chip: CPU + memória + periféricos, otimizado para baixo consumo e custo reduzido.</p>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Arquitetura ARM</h4>
+                        <p>Filosofia RISC com eficiência energética, pipeline de execução e arquitetura Load/Store.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🏗️ Famílias Cortex</h4>
+                        <p>Cortex-A (aplicações), Cortex-R (tempo real) e Cortex-M (microcontroladores).</p>
+                    </div>
+                </div>
+
+                <div class="discussion-box">
+                    <h4>💡 Desafio da Aula Anterior</h4>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #2a5298;">
+                        <p><strong>Resultado:</strong> Quais dispositivos ARM vocês identificaram? Vamos compartilhar as descobertas!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Famílias de Tecnologias ARM -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Tecnologias</div>
+                <h1 class="slide-title">Famílias ARM Cortex-M</h1>
+                <p class="slide-subtitle">Detalhamento das séries M0, M3, M4 e M7</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🏃 Cortex-M0/M0+</h4>
+                        <ul>
+                            <li>32-bit, arquitetura ARMv6-M</li>
+                            <li>Ultra baixo consumo</li>
+                            <li>Pipeline de 3 estágios</li>
+                            <li>Ideal para IoT e wearables</li>
+                            <li>Custo muito baixo</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Cortex-M3</h4>
+                        <ul>
+                            <li>32-bit, arquitetura ARMv7-M</li>
+                            <li>Pipeline de 3 estágios</li>
+                            <li>MPU (Memory Protection Unit)</li>
+                            <li>Maior conjunto de instruções</li>
+                            <li>Balanceamento performance/energia</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🚀 Cortex-M4</h4>
+                        <ul>
+                            <li>32-bit, arquitetura ARMv7E-M</li>
+                            <li>Unidade de processamento DSP</li>
+                            <li>Instruções SIMD</li>
+                            <li>Opcional: FPU (ponto flutuante)</li>
+                            <li>Aplicações de áudio e controle</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>💪 Cortex-M7</h4>
+                        <ul>
+                            <li>32-bit, arquitetura ARMv7E-M</li>
+                            <li>Pipeline de 6 estágios</li>
+                            <li>Cache de instrução e dados</li>
+                            <li>FPU dupla precisão</li>
+                            <li>Máxima performance da família M</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">8MHz</div>
+                        <div class="stat-label">M0 típico</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100MHz</div>
+                        <div class="stat-label">M3/M4 típico</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">400MHz</div>
+                        <div class="stat-label">M7 máximo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Principais Fabricantes -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Fabricantes</div>
+                <h1 class="slide-title">Principais Fabricantes</h1>
+                <p class="slide-subtitle">Ecossistema ARM para microcontroladores</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🇫🇷 STMicroelectronics</h4>
+                        <p><strong>Família STM32:</strong> F0, F1, F4, F7, L0, L4, H7<br>
+                        <strong>Características:</strong> HAL library, CubeMX, ampla documentação<br>
+                        <strong>Aplicações:</strong> Industrial, automotivo, IoT</p>
+                    </div>
+                    <div class="card">
+                        <h4>🇳🇱 NXP (Freescale)</h4>
+                        <p><strong>Família LPC:</strong> LPC800, LPC1100, LPC1700, LPC4300<br>
+                        <strong>Características:</strong> Kinetis SDK, baixo custo<br>
+                        <strong>Aplicações:</strong> Automotivo, industrial, consumer</p>
+                    </div>
+                    <div class="card">
+                        <h4>🇺🇸 Texas Instruments</h4>
+                        <p><strong>Família Tiva C:</strong> TM4C series<br>
+                        <strong>Características:</strong> TivaWare, integração com Stellaris<br>
+                        <strong>Aplicações:</strong> Educacional, prototipagem, IoT</p>
+                    </div>
+                    <div class="card">
+                        <h4>🇺🇸 Microchip (Atmel)</h4>
+                        <p><strong>Família SAM:</strong> SAMD, SAME, SAMV<br>
+                        <strong>Características:</strong> ASF (Advanced Software Framework)<br>
+                        <strong>Aplicações:</strong> IoT, automação, medição</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Por que STM32 na Disciplina?</h3>
+                    <p>Escolhemos STM32 pela excelente documentação, ferramentas gratuitas (CubeIDE), ampla disponibilidade no mercado brasileiro, suporte da comunidade e bibliotecas HAL bem estruturadas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Arquitetura Interna do Microcontrolador -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Arquitetura</div>
+                <h1 class="slide-title">Arquitetura Interna</h1>
+                <p class="slide-subtitle">Organização dos componentes internos</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="architecture-diagram">
+                    <h3 style="color: #2a5298; margin-bottom: 30px;">Diagrama de Blocos - STM32F4</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center;">
+                        <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; border: 2px solid #2a5298;">
+                            <strong>ARM Cortex-M4</strong><br>
+                            CPU Core<br>
+                            FPU<br>
+                            NVIC
+                        </div>
+                        <div style="background: #e8f5e8; padding: 20px; border-radius: 12px; border: 2px solid #4caf50;">
+                            <strong>Memórias</strong><br>
+                            Flash (até 2MB)<br>
+                            SRAM (até 384KB)<br>
+                            CCM RAM
+                        </div>
+                        <div style="background: #fff3e0; padding: 20px; border-radius: 12px; border: 2px solid #ff9800;">
+                            <strong>Clock & Reset</strong><br>
+                            HSI/HSE<br>
+                            PLL<br>
+                            RCC
+                        </div>
+                    </div>
+                    <br>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center;">
+                        <div style="background: #fce4ec; padding: 20px; border-radius: 12px; border: 2px solid #e91e63;">
+                            <strong>Periféricos</strong><br>
+                            GPIO, UART, SPI, I2C<br>
+                            ADC, DAC, Timers<br>
+                            USB, Ethernet, CAN
+                        </div>
+                        <div style="background: #f3e5f5; padding: 20px; border-radius: 12px; border: 2px solid #9c27b0;">
+                            <strong>Barramentos</strong><br>
+                            AHB (High Performance)<br>
+                            APB1/APB2 (Peripherals)<br>
+                            Sistema de DMA
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Barramentos Internos -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Barramentos</div>
+                <h1 class="slide-title">Sistema de Barramentos</h1>
+                <p class="slide-subtitle">AHB, APB e matriz de barramento</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🚌 AHB (Advanced High-performance Bus)</h4>
+                        <ul>
+                            <li>Barramento principal de alta velocidade</li>
+                            <li>Conecta CPU, memória e DMA</li>
+                            <li>Suporta transferências burst</li>
+                            <li>Largura de 32 bits</li>
+                            <li>Clock máximo do sistema</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔌 APB1 (Advanced Peripheral Bus 1)</h4>
+                        <ul>
+                            <li>Periféricos de baixa velocidade</li>
+                            <li>Clock típico: até 42MHz (STM32F4)</li>
+                            <li>UART, I2C, SPI, Timers básicos</li>
+                            <li>Menor consumo de energia</li>
+                            <li>Interface simplificada</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ APB2 (Advanced Peripheral Bus 2)</h4>
+                        <ul>
+                            <li>Periféricos de alta velocidade</li>
+                            <li>Clock típico: até 84MHz (STM32F4)</li>
+                            <li>GPIO, ADC, Timers avançados</li>
+                            <li>SPI de alta velocidade</li>
+                            <li>USART síncronos</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 Bus Matrix</h4>
+                        <ul>
+                            <li>Matriz de interconexão</li>
+                            <li>Acesso simultâneo aos barramentos</li>
+                            <li>Arbitragem de prioridades</li>
+                            <li>Reduz gargalos de comunicação</li>
+                            <li>Melhora performance geral</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Implicações Práticas</h3>
+                    <p>A escolha do barramento afeta diretamente a performance do periférico. Periféricos críticos ficam no APB2, enquanto funções de suporte ficam no APB1 para economizar energia.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Periféricos Integrados -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Periféricos</div>
+                <h1 class="slide-title">Periféricos Integrados</h1>
+                <p class="slide-subtitle">Componentes disponíveis no chip</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>📡 GPIO (General Purpose I/O)</h4>
+                        <ul>
+                            <li>Pinos configuráveis como entrada/saída</li>
+                            <li>Push-pull ou open-drain</li>
+                            <li>Resistores pull-up/pull-down internos</li>
+                            <li>Velocidade configurável</li>
+                            <li>Função alternada (AF)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 ADC (Analog-to-Digital Converter)</h4>
+                        <ul>
+                            <li>Resolução: 12 bits típico</li>
+                            <li>Múltiplos canais de entrada</li>
+                            <li>Conversão por software ou trigger</li>
+                            <li>DMA support</li>
+                            <li>Referência de tensão interna/externa</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ DAC (Digital-to-Analog Converter)</h4>
+                        <ul>
+                            <li>Resolução: 12 bits</li>
+                            <li>Saída de tensão 0-VDD</li>
+                            <li>Buffer de saída</li>
+                            <li>Trigger por timer ou software</li>
+                            <li>Geração de formas de onda</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⏰ Timers</h4>
+                        <ul>
+                            <li>Contadores de 16/32 bits</li>
+                            <li>PWM (Pulse Width Modulation)</li>
+                            <li>Input Capture / Output Compare</li>
+                            <li>Encoder interface</li>
+                            <li>Trigger para outros periféricos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Interfaces de Comunicação -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Comunicação</div>
+                <h1 class="slide-title">Interfaces de Comunicação</h1>
+                <p class="slide-subtitle">UART, SPI, I2C e outros protocolos</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="protocol-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Interface</th>
+                                <th>Tipo</th>
+                                <th>Fios</th>
+                                <th>Velocidade</th>
+                                <th>Características</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>UART</strong></td>
+                                <td>Assíncrona</td>
+                                <td>2 (TX, RX)</td>
+                                <td>até 10.5 Mbps</td>
+                                <td>Comunicação serial simples, ponto-a-ponto</td>
+                            </tr>
+                            <tr>
+                                <td><strong>USART</strong></td>
+                                <td>Síncrona/Assíncrona</td>
+                                <td>3 (TX, RX, CK)</td>
+                                <td>até 21 Mbps</td>
+                                <td>UART + clock, modos síncronos</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SPI</strong></td>
+                                <td>Síncrona</td>
+                                <td>4 (MOSI, MISO, SCK, CS)</td>
+                                <td>até 37.5 Mbps</td>
+                                <td>Full-duplex, master/slave, múltiplos slaves</td>
+                            </tr>
+                            <tr>
+                                <td><strong>I2C</strong></td>
+                                <td>Síncrona</td>
+                                <td>2 (SDA, SCL)</td>
+                                <td>até 1 MHz</td>
+                                <td>Multi-master, endereçamento, baixo pino</td>
+                            </tr>
+                            <tr>
+                                <td><strong>CAN</strong></td>
+                                <td>Assíncrona</td>
+                                <td>2 (CAN_H, CAN_L)</td>
+                                <td>até 1 Mbps</td>
+                                <td>Automotivo, tolerância a falhas</td>
+                            </tr>
+                            <tr>
+                                <td><strong>USB</strong></td>
+                                <td>Assíncrona</td>
+                                <td>2 (D+, D-)</td>
+                                <td>até 480 Mbps</td>
+                                <td>Host/Device, plug-and-play</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Escolhendo a Interface Certa</h3>
+                    <p><strong>UART:</strong> Debug, GPS, Bluetooth | <strong>SPI:</strong> Sensores, displays, memória | <strong>I2C:</strong> Sensores, RTC, EEPROM | <strong>CAN:</strong> Automotivo, industrial</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Sistema de Clock -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Clock</div>
+                <h1 class="slide-title">Sistema de Clock</h1>
+                <p class="slide-subtitle">Fontes de clock e gerenciamento de frequência</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🔄 HSI (High Speed Internal)</h4>
+                        <ul>
+                            <li>Oscilador RC interno</li>
+                            <li>Frequência: 16 MHz (STM32F4)</li>
+                            <li>Rápido startup</li>
+                            <li>Menos preciso (~1% tolerância)</li>
+                            <li>Não requer componentes externos</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>💎 HSE (High Speed External)</h4>
+                        <ul>
+                            <li>Cristal ou oscilador externo</li>
+                            <li>Frequência: 4-26 MHz</li>
+                            <li>Alta precisão (~10-50 ppm)</li>
+                            <li>Startup mais lento</li>
+                            <li>Requer cristal + capacitores</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🚀 PLL (Phase-Locked Loop)</h4>
+                        <ul>
+                            <li>Multiplicador de frequência</li>
+                            <li>Entrada: HSI ou HSE</li>
+                            <li>Saída: até 180 MHz (STM32F4)</li>
+                            <li>Configuração de divisores</li>
+                            <li>Máxima performance do sistema</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🌙 LSI/LSE (Low Speed)</h4>
+                        <ul>
+                            <li>LSI: RC 32 kHz interno</li>
+                            <li>LSE: Cristal 32.768 kHz externo</li>
+                            <li>Baixo consumo</li>
+                            <li>RTC (Real Time Clock)</li>
+                            <li>Modos de baixo consumo</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h3 style="color: #2a5298; margin-bottom: 20px;">Árvore de Clock - STM32F4</h3>
+                    <div style="background: #f5f5f5; padding: 20px; border-radius: 12px; font-family: monospace;">
+                        HSE (8MHz) → PLL → SYSCLK (168MHz)<br>
+                        ├── AHB (168MHz) → CPU, Memory, DMA<br>
+                        ├── APB1 (42MHz) → UART, I2C, Timers 2-7<br>
+                        └── APB2 (84MHz) → GPIO, ADC, Timers 1,8-11
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Configuração de Clock -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Configuração</div>
+                <h1 class="slide-title">Configuração Prática</h1>
+                <p class="slide-subtitle">RCC e configuração de clock</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="code-example">
+// Configuração típica de clock STM32F4
+void SystemClock_Config(void) {
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+    // Configurar fonte de alimentação
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    // HSE + PLL configuração
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 8;    // Divisor de entrada
+    RCC_OscInitStruct.PLL.PLLN = 336;  // Multiplicador
+    RCC_OscInitStruct.PLL.PLLP = 2;    // Divisor principal
+    RCC_OscInitStruct.PLL.PLLQ = 7;    // Divisor USB
+
+    HAL_RCC_OscConfig(&RCC_OscInitStruct);
+}</div>
+
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>⚙️ RCC (Reset and Clock Control)</h4>
+                        <p>Periférico responsável por gerenciar todos os clocks do sistema, incluindo habilitação/desabilitação de periféricos e configuração de prescalers.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 CubeMX Clock Configuration</h4>
+                        <p>Ferramenta gráfica para configurar clocks visualmente, calculando automaticamente os divisores e verificando limites máximos.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Estratégias de Clock</h3>
+                    <p><strong>Performance máxima:</strong> HSE + PLL | <strong>Baixo consumo:</strong> HSI reduzido | <strong>Aplicações críticas:</strong> HSE com backup HSI | <strong>Debug:</strong> HSI (mais simples)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: DMA (Direct Memory Access) -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">DMA</div>
+                <h1 class="slide-title">Direct Memory Access</h1>
+                <p class="slide-subtitle">Transferência de dados sem intervenção da CPU</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🚀 O que é DMA?</h4>
+                        <ul>
+                            <li>Transferência direta memória-periférico</li>
+                            <li>Reduz carga da CPU</li>
+                            <li>Transferências em background</li>
+                            <li>Múltiplos canais simultâneos</li>
+                            <li>Triggers por periféricos</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 Tipos de Transferência</h4>
+                        <ul>
+                            <li>Memória → Memória</li>
+                            <li>Memória → Periférico</li>
+                            <li>Periférico → Memória</li>
+                            <li>Circular (buffer infinito)</li>
+                            <li>Normal (quantidade definida)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Aplicações Típicas</h4>
+                        <ul>
+                            <li>ADC → Buffer de dados</li>
+                            <li>UART → String recebida</li>
+                            <li>SPI → Transferência de arrays</li>
+                            <li>DAC → Geração de sinais</li>
+                            <li>Cópia de buffers grandes</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🎯 Configuração</h4>
+                        <ul>
+                            <li>Source/Destination address</li>
+                            <li>Data size (8/16/32 bits)</li>
+                            <li>Priority level</li>
+                            <li>Increment mode</li>
+                            <li>Transfer complete interrupt</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Vantagens do DMA</h3>
+                    <p>Libera CPU para outras tarefas, transferências mais rápidas, reduz latência de resposta, essencial para aplicações de tempo real e processamento de grandes volumes de dados.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Gerenciamento de Energia -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Energia</div>
+                <h1 class="slide-title">Gerenciamento de Energia</h1>
+                <p class="slide-subtitle">Modos de baixo consumo e otimização energética</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🔋 Run Mode</h4>
+                        <p><strong>Consumo:</strong> ~30-100mA<br>
+                        <strong>Estado:</strong> CPU ativa, todos os periféricos disponíveis<br>
+                        <strong>Wake-up:</strong> N/A (já acordado)</p>
+                    </div>
+                    <div class="card">
+                        <h4>😴 Sleep Mode</h4>
+                        <p><strong>Consumo:</strong> ~10-30mA<br>
+                        <strong>Estado:</strong> CPU parada, periféricos ativos<br>
+                        <strong>Wake-up:</strong> Qualquer interrupção</p>
+                    </div>
+                    <div class="card">
+                        <h4>🛌 Stop Mode</h4>
+                        <p><strong>Consumo:</strong> ~1-10μA<br>
+                        <strong>Estado:</strong> Clocks parados, RAM preservada<br>
+                        <strong>Wake-up:</strong> EXTI, RTC, Watchdog</p>
+                    </div>
+                    <div class="card">
+                        <h4>💤 Standby Mode</h4>
+                        <p><strong>Consumo:</strong> ~1-3μA<br>
+                        <strong>Estado:</strong> Menor consumo, RAM perdida<br>
+                        <strong>Wake-up:</strong> Reset, RTC, pino wake-up</p>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">100mA</div>
+                        <div class="stat-label">Run @ 168MHz</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">20mA</div>
+                        <div class="stat-label">Sleep @ 168MHz</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">9μA</div>
+                        <div class="stat-label">Stop Mode</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">2μA</div>
+                        <div class="stat-label">Standby Mode</div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Estratégias de Otimização</h3>
+                    <p>Desabilitar periféricos não utilizados, reduzir frequência de clock quando possível, usar DMA para reduzir wake-ups, escolher modo de sleep apropriado para cada situação.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Conceitos GPIO -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">GPIO</div>
+                <h1 class="slide-title">Configuração de GPIO</h1>
+                <p class="slide-subtitle">Conceitos e estruturas de configuração</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🔧 Estrutura GPIO_InitTypeDef</h4>
+                        <ul>
+                            <li><strong>Pin:</strong> Seleção do pino (GPIO_PIN_x)</li>
+                            <li><strong>Mode:</strong> Entrada, saída, AF, analógico</li>
+                            <li><strong>Pull:</strong> Pull-up, pull-down, nenhum</li>
+                            <li><strong>Speed:</strong> Velocidade de transição</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Modos de Operação</h4>
+                        <ul>
+                            <li><strong>INPUT:</strong> Leitura de sinal digital</li>
+                            <li><strong>OUTPUT_PP:</strong> Saída push-pull</li>
+                            <li><strong>OUTPUT_OD:</strong> Saída open-drain</li>
+                            <li><strong>AF_PP:</strong> Função alternada</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Velocidade de GPIO</h4>
+                        <ul>
+                            <li><strong>LOW:</strong> 8MHz - LEDs, switches</li>
+                            <li><strong>MEDIUM:</strong> 50MHz - Aplicações gerais</li>
+                            <li><strong>HIGH:</strong> 100MHz - Comunicação rápida</li>
+                            <li><strong>VERY_HIGH:</strong> 180MHz - Sinais críticos</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 Sequência de Configuração</h4>
+                        <ul>
+                            <li>1. Habilitar clock do GPIO</li>
+                            <li>2. Preencher estrutura Init</li>
+                            <li>3. Chamar HAL_GPIO_Init()</li>
+                            <li>4. Usar HAL_GPIO_WritePin()</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Gerenciamento de Clock GPIO</h3>
+                    <p>Cada porta GPIO tem seu próprio clock que deve ser habilitado antes da configuração. Isso permite economia de energia desabilitando portas não utilizadas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Código GPIO -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Prática</div>
+                <h1 class="slide-title">Exemplo Prático GPIO</h1>
+                <p class="slide-subtitle">LED piscante com configuração completa</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="code-example">
+// Exemplo: LED piscante com configuração completa
+#include "stm32f4xx_hal.h"
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+
+int main(void) {
+    // Inicialização do HAL
+    HAL_Init();
+    
+    // Configurar clock do sistema
+    SystemClock_Config();
+    
+    // Inicializar GPIO
+    MX_GPIO_Init();
+    
+    // Loop principal
+    while (1) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+        HAL_Delay(500);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+        HAL_Delay(500);
+    }
+}
+
+static void MX_GPIO_Init(void) {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    
+    // Habilitar clock do GPIOA
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    
+    // Configurar PA5 como saída
+    GPIO_InitStruct.Pin = GPIO_PIN_5;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    
+    // Estado inicial - LED apagado
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+}</div>
+
+                <div class="discussion-box">
+                    <h4>🔍 Análise do Código</h4>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #2a5298;">
+                        <p><strong>1. HAL_Init():</strong> Configura SysTick e inicializa o HAL<br>
+                        <strong>2. SystemClock_Config():</strong> Define frequências dos barramentos<br>
+                        <strong>3. __HAL_RCC_GPIOA_CLK_ENABLE():</strong> Habilita clock do periférico<br>
+                        <strong>4. GPIO_InitStruct:</strong> Estrutura de configuração do pino<br>
+                        <strong>5. HAL_GPIO_WritePin():</strong> Controla estado do pino</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Laboratório Proposto -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Laboratório</div>
+                <h1 class="slide-title">Atividade Prática</h1>
+                <p class="slide-subtitle">Explorando clock e GPIO</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🎯 Objetivo</h4>
+                        <p>Criar um sistema que demonstre diferentes configurações de clock e seu impacto no comportamento de LEDs.</p>
+                    </div>
+                    <div class="card">
+                        <h4>📋 Especificações</h4>
+                        <ul>
+                            <li>3 LEDs com frequências diferentes</li>
+                            <li>Botão para alternar entre modos de clock</li>
+                            <li>Medição de consumo de corrente</li>
+                            <li>Display da frequência atual</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 Implementação</h4>
+                        <ul>
+                            <li>HSI @ 16MHz (LED1 rápido)</li>
+                            <li>HSI/2 @ 8MHz (LED2 médio)</li>
+                            <li>HSI/4 @ 4MHz (LED3 lento)</li>
+                            <li>Alternar modos com interrupção</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Análise</h4>
+                        <ul>
+                            <li>Comparar consumo de corrente</li>
+                            <li>Verificar precisão dos delays</li>
+                            <li>Documentar comportamento observado</li>
+                            <li>Calcular eficiência energética</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Objetivo da Atividade</h3>
+                    <p>Desenvolver compreensão prática sobre o impacto das diferentes configurações de clock no comportamento do sistema e consumo de energia.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Preparação para Próxima Aula -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Próximos Passos</div>
+                <h1 class="slide-title">Preparação Aula 3</h1>
+                <p class="slide-subtitle">Memórias: RAM, ROM, EPROM, EEPROM e FLASH</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>📚 Leitura Obrigatória</h4>
+                        <p><strong>Ball, S.</strong> - Embedded Microprocessor Systems, Capítulo 3: Memory Systems<br>
+                        <strong>STM32F4 Reference Manual</strong> - Seção 3: Memory mapping</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔍 Pesquisa Dirigida</h4>
+                        <p>Diferenças entre tipos de memória não-volátil, características de durabilidade (write/erase cycles), e aplicações típicas de cada tipo.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🛠️ Preparação Prática</h4>
+                        <p>Instalar ST-Link Utility, familiarizar-se com memory map do STM32F4, e revisar conceitos de ponteiros em C.</p>
+                    </div>
+                    <div class="card">
+                        <h4>💡 Desafio</h4>
+                        <p>Identifiquem as diferentes seções de memória no map file gerado pelo compilador e tragam dúvidas sobre organização de memória.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Checkpoint 1 - Aproximando!</h3>
+                    <p>Lembrem-se: <strong>20/08</strong> é o primeiro checkpoint do projeto. Comecem a definir o escopo e especificações técnicas. Na próxima aula, discutiremos como a organização de memória afeta o desenvolvimento do projeto.</p>
+                </div>
+
+                <div class="discussion-box">
+                    <h4>❓ Pergunta para Casa</h4>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #2a5298;">
+                        <p><strong>Reflitam:</strong> Por que um microcontrolador precisa de diferentes tipos de memória? Não seria mais simples ter apenas um tipo?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegação -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">
+                ← Anterior
+            </button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
+                Próximo →
+            </button>
+        </div>
+
+        <!-- Contador de slides -->
+        <div class="slide-counter">
+            <span id="slideCounter">1 / 17</span>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            // Update counter
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            if (direction === 1 && currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            } else if (direction === -1 && currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        // Initialize
+        document.getElementById('prevBtn').disabled = true;
+        
+        // Touch support for mobile
+        let startX = 0;
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    changeSlide(1);
+                } else {
+                    changeSlide(-1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

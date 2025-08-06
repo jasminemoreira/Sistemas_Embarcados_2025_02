@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Prático - STM32F072 Nucleo - Primeira Experiência</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(30, 60, 114, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .setup-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .code-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .step-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 6px solid #2a5298;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .step-title {
+            color: #2a5298;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .step-description {
+            color: #444;
+            line-height: 1.7;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .theory-box {
+            background: rgba(42, 82, 152, 0.1);
+            border: 2px solid rgba(42, 82, 152, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .theory-box h4 {
+            color: #2a5298;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #2a5298;
+            position: relative;
+        }
+
+        .code-header {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 10px 20px;
+            margin: -25px -25px 15px -25px;
+            border-radius: 12px 12px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .copy-button:hover {
+            background: #1e3c72;
+        }
+
+        .hardware-box {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .hardware-header {
+            color: #ff6b35;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .highlight-box h4 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #f57c00;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-panel {
+            background: rgba(40, 167, 69, 0.1);
+            border: 2px solid rgba(40, 167, 69, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-panel h4 {
+            color: #28a745;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+            margin: 10px 10px 10px 0;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .list {
+            margin: 15px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .list li {
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .list li::before {
+            content: '▶';
+            color: #2a5298;
+            position: absolute;
+            left: 0;
+            font-size: 14px;
+            top: 2px;
+        }
+
+        .explanation-box {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #2a5298;
+        }
+
+        .explanation-box h5 {
+            color: #2a5298;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .explanation-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .pin-diagram {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid rgba(42, 82, 152, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .step-container {
+                padding: 20px;
+            }
+
+            .code-block {
+                padding: 15px;
+                font-size: 12px;
+            }
+
+            .step-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .step-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        .syntax-function { color: #dcdcaa; }
+        .syntax-type { color: #4ec9b0; }
+        .syntax-define { color: #c586c0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge">🎯 Primeira Experiência</div>
+            <h1 class="title">STM32F072 Nucleo - Primeiros Passos</h1>
+            <p class="subtitle">Configuração do Arduino IDE e exemplos básicos de GPIO</p>
+        </div>
+
+        <div class="highlight-box">
+            <h4>🎯 Objetivos Simples</h4>
+            <p>Configurar o ambiente Arduino IDE para STM32 e implementar 4 exemplos básicos: LED piscante, botão, comunicação serial e controle de brilho. Foco na compreensão dos conceitos fundamentais de GPIO e periféricos.</p>
+        </div>
+
+        <div class="info-panel">
+            <h4>📋 Material Necessário</h4>
+            <ul class="list">
+                <li>Placa STM32F072RB Nucleo</li>
+                <li>Cabo USB tipo A para Mini-B</li>
+                <li>Computador com Arduino IDE 2.x instalado</li>
+                <li><strong>Opcional:</strong> LED + resistor 220Ω, jumpers</li>
+            </ul>
+        </div>
+
+        <!-- Passo 1: Setup Arduino IDE -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title">Preparação do Arduino IDE</h2>
+            </div>
+            <div class="setup-badge">⚙️ Configuração Inicial</div>
+            <p class="step-description">Primeiro, vamos configurar o Arduino IDE para reconhecer o STM32F072. Este processo adiciona suporte para a família de microcontroladores STM32, permitindo programá-los com a interface familiar do Arduino.</p>
+            
+            <div class="theory-box">
+                <h4>💡 Por que Arduino IDE?</h4>
+                <p>O Arduino IDE com STM32 Core oferece uma interface amigável para iniciantes, mantendo acesso aos recursos avançados do microcontrolador. É ideal para aprender conceitos de sistemas embarcados sem a complexidade inicial de IDEs profissionais.</p>
+            </div>
+
+            <div class="explanation-box">
+                <h5>📝 Passo a passo da configuração:</h5>
+                <p><strong>1.</strong> Abra Arduino IDE → Arquivo → Preferências<br>
+                <strong>2.</strong> Em "URLs adicionais para Gerenciadores de Placas", cole:</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>🔗 URL do STM32 Board Manager</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code>https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔧 Instalar o suporte STM32:</h5>
+                <p><strong>3.</strong> Ferramentas → Gerenciador de Placas<br>
+                <strong>4.</strong> Pesquise "STM32" e instale <strong>"STM32 MCU based boards by STMicroelectronics"</strong><br>
+                <strong>5.</strong> Aguarde o download (pode demorar alguns minutos)</p>
+            </div>
+
+            <div class="pin-diagram">
+                <h4 style="color: #2a5298; margin-bottom: 15px;">📌 STM32F072RB Nucleo - Pinos Principais</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 13px; text-align: left;">
+                    <strong>🔴 LEDs e Botão Onboard:</strong><br>
+                    PA5  → LED2 verde (onboard)<br>
+                    PC13 → Botão azul USER (onboard)<br><br>
+                    <strong>📡 Comunicação Serial:</strong><br>
+                    PA2/PA3 → UART2 (via USB ST-Link)<br><br>
+                    <strong>🔌 GPIO Disponíveis:</strong><br>
+                    PA0-PA15, PB0-PB15, PC0-PC15 → Pinos digitais
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Configuração da Placa</h4>
+                <p>Após instalar o suporte STM32, configure:<br>
+                <strong>Ferramentas → Placa →</strong> "Generic STM32F0 series"<br>
+                <strong>Board part number →</strong> "Nucleo F072RB"<br>
+                <strong>Upload method →</strong> "STM32CubeProgrammer (SWD)"</p>
+            </div>
+        </div>
+
+        <!-- Passo 2: LED Piscante -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title">Exemplo 1: LED Piscante</h2>
+            </div>
+            <div class="code-badge">💡 GPIO Saída</div>
+            <p class="step-description">Vamos implementar o "Hello World" dos sistemas embarcados: fazer um LED piscar. Este exemplo demonstra como configurar um pino GPIO como saída digital e controlar seu estado.</p>
+            
+            <div class="theory-box">
+                <h4>🔌 GPIO - General Purpose Input/Output</h4>
+                <p>GPIO são pinos configuráveis que podem ser entradas ou saídas digitais. O STM32F072 tem dezenas de pinos GPIO organizados em "portas" (A, B, C). Cada pino pode ser configurado individualmente.</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>💡 led_blink.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * STM32F072 - LED Piscante Simples
+ * Usa o LED verde onboard (PA5)
+ */</span>
+
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_PIN</span> <span class="syntax-string">PA5</span>  <span class="syntax-comment">// LED verde onboard</span>
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-comment">// Configurar pino como saída</span>
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">OUTPUT</span>);
+  
+  <span class="syntax-comment">// Inicializar comunicação serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"STM32F072 - LED Piscante iniciado!"</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Liga LED</span>
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">HIGH</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"LED ON"</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);  <span class="syntax-comment">// Aguarda 1 segundo</span>
+  
+  <span class="syntax-comment">// Desliga LED</span>
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">LOW</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"LED OFF"</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);  <span class="syntax-comment">// Aguarda 1 segundo</span>
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 O que este código faz:</h5>
+                <p><strong>pinMode():</strong> Configura PA5 como saída digital<br>
+                <strong>digitalWrite():</strong> Liga (HIGH) ou desliga (LOW) o LED<br>
+                <strong>delay():</strong> Pausa a execução por tempo determinado<br>
+                <strong>Serial.println():</strong> Envia mensagem para o computador via USB</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Teste Prático</h4>
+                <p><strong>1.</strong> Cole o código no Arduino IDE<br>
+                <strong>2.</strong> Conecte a placa Nucleo via USB<br>
+                <strong>3.</strong> Clique em "Upload" (seta para direita)<br>
+                <strong>4.</strong> Observe o LED verde onboard piscando a cada 1 segundo</p>
+            </div>
+        </div>
+
+        <!-- Passo 3: Botão -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title">Exemplo 2: Botão Liga/Desliga LED</h2>
+            </div>
+            <div class="code-badge">🔲 GPIO Entrada</div>
+            <p class="step-description">Agora vamos ler o estado de um botão (entrada digital) para controlar o LED. Demonstra como usar GPIO como entrada e implementar interação básica com o usuário.</p>
+            
+            <div class="theory-box">
+                <h4>📖 Entrada Digital</h4>
+                <p>Pinos GPIO também podem ser configurados como entradas para ler sinais digitais. O botão azul onboard está conectado ao pino PC13 e possui resistor pull-up externo.</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>🔲 button_control.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * STM32F072 - Controle LED com Botão
+ * Botão azul onboard liga/desliga LED verde
+ */</span>
+
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_PIN</span>    <span class="syntax-string">PA5</span>   <span class="syntax-comment">// LED verde onboard</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BUTTON_PIN</span> <span class="syntax-string">PC13</span>  <span class="syntax-comment">// Botão azul onboard</span>
+
+<span class="syntax-type">bool</span> ledState = <span class="syntax-keyword">false</span>;           <span class="syntax-comment">// Estado atual do LED</span>
+<span class="syntax-type">bool</span> lastButtonState = <span class="syntax-keyword">HIGH</span>;    <span class="syntax-comment">// Estado anterior do botão</span>
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-comment">// Configurar pinos</span>
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">OUTPUT</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">BUTTON_PIN</span>, <span class="syntax-string">INPUT</span>);  <span class="syntax-comment">// Botão já tem pull-up externo</span>
+  
+  <span class="syntax-comment">// Inicializar Serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"STM32F072 - Controle por Botão"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Pressione o botão azul para ligar/desligar LED"</span>);
+  
+  <span class="syntax-comment">// LED inicia desligado</span>
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">LOW</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Ler estado atual do botão</span>
+  <span class="syntax-type">bool</span> currentButtonState = <span class="syntax-function">digitalRead</span>(<span class="syntax-function">BUTTON_PIN</span>);
+  
+  <span class="syntax-comment">// Verificar se botão foi pressionado (mudou de HIGH para LOW)</span>
+  <span class="syntax-keyword">if</span> (lastButtonState == <span class="syntax-string">HIGH</span> && currentButtonState == <span class="syntax-string">LOW</span>) {
+    <span class="syntax-comment">// Inverter estado do LED</span>
+    ledState = !ledState;
+    <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, ledState);
+    
+    <span class="syntax-comment">// Mostrar no Serial</span>
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Botão pressionado! LED: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(ledState ? <span class="syntax-string">"ON"</span> : <span class="syntax-string">"OFF"</span>);
+    
+    <span class="syntax-comment">// Pequena pausa para evitar múltiplas leituras</span>
+    <span class="syntax-function">delay</span>(<span class="syntax-number">200</span>);
+  }
+  
+  <span class="syntax-comment">// Atualizar estado anterior</span>
+  lastButtonState = currentButtonState;
+  
+  <span class="syntax-comment">// Pequena pausa para não sobrecarregar o processador</span>
+  <span class="syntax-function">delay</span>(<span class="syntax-number">50</span>);
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Conceitos demonstrados:</h5>
+                <p><strong>digitalRead():</strong> Lê estado do pino (HIGH ou LOW)<br>
+                <strong>Detecção de Borda:</strong> Detecta mudança HIGH→LOW (botão pressionado)<br>
+                <strong>Estado Ativo-Baixo:</strong> Botão onboard é LOW quando pressionado<br>
+                <strong>Debounce Simples:</strong> delay(200) evita múltiplas leituras</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Teste Prático</h4>
+                <p><strong>1.</strong> Upload do código<br>
+                <strong>2.</strong> Abra o Serial Monitor (Ctrl+Shift+M)<br>
+                <strong>3.</strong> Pressione o botão azul onboard<br>
+                <strong>4.</strong> Veja o LED verde ligar/desligar a cada pressão</p>
+            </div>
+        </div>
+
+        <!-- Passo 4: Comunicação Serial -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title">Exemplo 3: Comandos via Serial</h2>
+            </div>
+            <div class="code-badge">📡 Interface UART</div>
+            <p class="step-description">Implementaremos comunicação bidirecional via UART. O computador poderá enviar comandos para controlar o LED, demonstrando uma interface de comunicação como estudado na aula sobre barramentos.</p>
+            
+            <div class="theory-box">
+                <h4>📡 UART - Comunicação Serial</h4>
+                <p>UART é comunicação serial assíncrona (sem clock compartilhado). No Nucleo, a UART2 (pinos PA2/PA3) está conectada ao ST-Link, permitindo comunicação com o PC via USB. É fundamental para debug e interfaces.</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📡 serial_commands.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * STM32F072 - Comandos via Serial
+ * Controla LED através de comandos enviados pelo computador
+ * 
+ * Comandos disponíveis:
+ * - "ON" : Liga LED
+ * - "OFF": Desliga LED
+ * - "STATUS": Mostra status atual
+ */</span>
+
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_PIN</span> <span class="syntax-string">PA5</span>   <span class="syntax-comment">// LED verde onboard</span>
+
+<span class="syntax-type">bool</span> ledState = <span class="syntax-keyword">false</span>;
+<span class="syntax-type">String</span> command = <span class="syntax-string">""</span>;
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-comment">// Configurar LED</span>
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">OUTPUT</span>);
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">LOW</span>);
+  
+  <span class="syntax-comment">// Inicializar Serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">2000</span>);  <span class="syntax-comment">// Aguardar conexão</span>
+  
+  <span class="syntax-comment">// Mensagem de boas-vindas</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"================================="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"STM32F072 - Interface Serial"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"================================="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Comandos disponíveis:"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- ON      : Liga LED"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- OFF     : Desliga LED"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- STATUS  : Mostra status"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"================================="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Verificar se há dados na serial</span>
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">Serial</span>.<span class="syntax-function">available</span>()) {
+    <span class="syntax-comment">// Ler comando</span>
+    command = <span class="syntax-function">Serial</span>.<span class="syntax-function">readString</span>();
+    command.<span class="syntax-function">trim</span>();  <span class="syntax-comment">// Remove espaços e quebras de linha</span>
+    command.<span class="syntax-function">toUpperCase</span>();  <span class="syntax-comment">// Converte para maiúsculo</span>
+    
+    <span class="syntax-comment">// Mostrar comando recebido</span>
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Comando recebido: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(command);
+    
+    <span class="syntax-comment">// Processar comandos</span>
+    <span class="syntax-keyword">if</span> (command == <span class="syntax-string">"ON"</span>) {
+      ledState = <span class="syntax-keyword">true</span>;
+      <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">HIGH</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"✅ LED ligado"</span>);
+      
+    } <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"OFF"</span>) {
+      ledState = <span class="syntax-keyword">false</span>;
+      <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">LOW</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🔴 LED desligado"</span>);
+      
+    } <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"STATUS"</span>) {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- STATUS ATUAL ---"</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"LED: "</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(ledState ? <span class="syntax-string">"ON"</span> : <span class="syntax-string">"OFF"</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Uptime: "</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">millis</span>() / <span class="syntax-number">1000</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" segundos"</span>);
+      
+    } <span class="syntax-keyword">else</span> {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"❌ Comando não reconhecido!"</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Use: ON, OFF ou STATUS"</span>);
+    }
+    
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();  <span class="syntax-comment">// Linha em branco</span>
+  }
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 Conceitos de comunicação:</h5>
+                <p><strong>Serial.available():</strong> Verifica se há dados recebidos<br>
+                <strong>Serial.readString():</strong> Lê string completa<br>
+                <strong>String.trim():</strong> Remove espaços extras<br>
+                <strong>Protocolo Simples:</strong> Comandos de texto predefinidos</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Como Testar</h4>
+                <p><strong>1.</strong> Upload do código<br>
+                <strong>2.</strong> Abra Serial Monitor (Ctrl+Shift+M)<br>
+                <strong>3.</strong> Configure baud rate para <strong>115200</strong><br>
+                <strong>4.</strong> Digite comandos: "ON", "OFF", "STATUS"<br>
+                <strong>5.</strong> Pressione Enter para enviar</p>
+            </div>
+        </div>
+
+        <!-- Passo 5: PWM Simples -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <h2 class="step-title">Exemplo 4: Controle de Brilho (PWM)</h2>
+            </div>
+            <div class="code-badge">⚡ Timer PWM</div>
+            <p class="step-description">Implementaremos controle de brilho usando PWM (Pulse Width Modulation). Demonstra como usar os timers internos do STM32F072 para gerar sinais PWM, criando efeitos de "respiração" no LED.</p>
+            
+            <div class="theory-box">
+                <h4>⚡ PWM - Pulse Width Modulation</h4>
+                <p>PWM simula saídas analógicas variando a largura de pulsos digitais. O STM32F072 possui timers que geram PWM automaticamente. Duty cycle de 0-100% controla a "potência média" do sinal.</p>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>⚡ pwm_breathing.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * STM32F072 - LED "Respirando" com PWM
+ * Cria efeito de fade in/out no LED usando PWM
+ */</span>
+
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_PIN</span> <span class="syntax-string">PA5</span>   <span class="syntax-comment">// LED verde onboard (suporta PWM)</span>
+
+<span class="syntax-type">int</span> brightness = <span class="syntax-number">0</span>;       <span class="syntax-comment">// Brilho atual (0-255)</span>
+<span class="syntax-type">int</span> fadeDirection = <span class="syntax-number">1</span>;   <span class="syntax-comment">// Direção do fade (1 = aumentando, -1 = diminuindo)</span>
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-comment">// Configurar pino para PWM</span>
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">OUTPUT</span>);
+  
+  <span class="syntax-comment">// Inicializar Serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"STM32F072 - PWM Breathing Effect"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Observe o LED 'respirando'..."</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Aplicar PWM ao LED</span>
+  <span class="syntax-function">analogWrite</span>(<span class="syntax-function">LED_PIN</span>, brightness);
+  
+  <span class="syntax-comment">// Atualizar brilho</span>
+  brightness = brightness + (fadeDirection * <span class="syntax-number">5</span>);
+  
+  <span class="syntax-comment">// Verificar limites e inverter direção</span>
+  <span class="syntax-keyword">if</span> (brightness >= <span class="syntax-number">255</span>) {
+    brightness = <span class="syntax-number">255</span>;
+    fadeDirection = -<span class="syntax-number">1</span>;  <span class="syntax-comment">// Começar a diminuir</span>
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"💡 Brilho máximo"</span>);
+  }
+  <span class="syntax-keyword">else if</span> (brightness <= <span class="syntax-number">0</span>) {
+    brightness = <span class="syntax-number">0</span>;
+    fadeDirection = <span class="syntax-number">1</span>;   <span class="syntax-comment">// Começar a aumentar</span>
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🌑 Brilho mínimo"</span>);
+  }
+  
+  <span class="syntax-comment">// Mostrar progresso ocasionalmente</span>
+  <span class="syntax-type">static int</span> counter = <span class="syntax-number">0</span>;
+  <span class="syntax-keyword">if</span> (++counter >= <span class="syntax-number">20</span>) {  <span class="syntax-comment">// A cada 20 ciclos</span>
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Brilho: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>((brightness * <span class="syntax-number">100</span>) / <span class="syntax-number">255</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"%  (raw: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(brightness);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">")"</span>);
+    counter = <span class="syntax-number">0</span>;
+  }
+  
+  <span class="syntax-comment">// Pausa para controlar velocidade do efeito</span>
+  <span class="syntax-function">delay</span>(<span class="syntax-number">30</span>);  <span class="syntax-comment">// Ajuste para efeito mais rápido/lento</span>
+}</code></pre>
+            </div>
+
+            <div class="explanation-box">
+                <h5>🔍 PWM em ação:</h5>
+                <p><strong>analogWrite():</strong> Gera PWM com duty cycle de 0-255<br>
+                <strong>Fade Direction:</strong> Controla se brilho aumenta ou diminui<br>
+                <strong>Limites:</strong> Inverte direção quando atinge 0% ou 100%<br>
+                <strong>Timer Automático:</strong> STM32 gera PWM via hardware</p>
+            </div>
+
+            <div class="hardware-box">
+                <div class="hardware-header">💡 Para LED Externo (Opcional)</div>
+                <strong>Se quiser LED mais visível:</strong><br>
+                • LED anodo → PA6 (em vez de PA5)<br>
+                • LED catodo → Resistor 220Ω → GND<br>
+                • Altere #define LED_PIN PA6
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Resultado Esperado</h4>
+                <p>O LED verde onboard fará um efeito de "respiração", aumentando e diminuindo o brilho suavemente. No Serial Monitor, você verá mensagens indicando o progresso do brilho.</p>
+            </div>
+        </div>
+
+        <!-- Desafio Final -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">🎯</div>
+                <h2 class="step-title">Desafio: Combine Tudo!</h2>
+            </div>
+            <div class="code-badge">🚀 Integração</div>
+            <p class="step-description">Como desafio final, tente combinar os exemplos! Crie um sistema onde o botão alterna entre modos: LED piscante, LED "respirando" e LED controlado via serial.</p>
+            
+            <div class="theory-box">
+                <h4>💡 Conceitos para o Desafio</h4>
+                <p>Este desafio integra GPIO (entrada e saída), PWM (timers), UART (comunicação) e lógica de estados - todos os conceitos fundamentais vistos nos exemplos anteriores.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🎯 Sugestão de Implementação</h4>
+                <p><strong>Modo 1:</strong> LED piscante (como exemplo 1)<br>
+                <strong>Modo 2:</strong> LED respirando (como exemplo 4)<br>
+                <strong>Modo 3:</strong> Controle via serial (como exemplo 3)<br>
+                <strong>Troca de Modo:</strong> Botão azul onboard (como exemplo 2)</p>
+            </div>
+
+            <div class="explanation-box">
+                <h5>💭 Dicas para Implementar:</h5>
+                <p><strong>1.</strong> Use uma variável `int mode` para controlar estado atual<br>
+                <strong>2.</strong> Na função loop(), use `switch(mode)` para diferentes comportamentos<br>
+                <strong>3.</strong> Detecte pressão do botão para incrementar modo<br>
+                <strong>4.</strong> Use `mode = mode % 3` para circular entre 0, 1, 2</p>
+            </div>
+        </div>
+
+        <!-- Resumo -->
+        <div class="highlight-box">
+            <h4>🎉 Parabéns!</h4>
+            <p>Você implementou com sucesso os conceitos fundamentais da Aula 2: configuração de GPIO como entrada e saída, uso de timers para PWM, comunicação UART e integração de periféricos. Estes são os blocos básicos para qualquer projeto com microcontroladores!</p>
+        </div>
+
+        <div class="info-panel">
+            <h4>🔗 Próximos Passos</h4>
+            <p>Na próxima aula exploraremos tipos de memória (RAM, Flash, EEPROM) e como organizar dados em sistemas embarcados. Os conceitos de GPIO e comunicação aprendidos hoje serão a base para projetos mais avançados.</p>
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Troubleshooting Rápido</h4>
+            <ul class="list">
+                <li><strong>Erro de upload:</strong> Verifique se placa está selecionada corretamente</li>
+                <li><strong>LED não acende:</strong> Confirme que é PA5 (LED2 verde onboard)</li>
+                <li><strong>Serial não funciona:</strong> Configure baud rate 115200</li>
+                <li><strong>Botão não responde:</strong> PC13 é ativo-baixo (LOW quando pressionado)</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://github.com/stm32duino/Arduino_Core_STM32" target="_blank" class="button">📚 Documentação STM32duino</a>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('pre code').textContent;
+            
+            navigator.clipboard.writeText(code).then(function() {
+                button.textContent = 'Copiado!';
+                button.style.background = '#4caf50';
+                
+                setTimeout(function() {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#2a5298';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                button.textContent = 'Erro';
+                button.style.background = '#f44336';
+                
+                setTimeout(function() {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#2a5298';
+                }, 2000);
+            });
+        }
+
+        // Animação suave dos elementos ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.step-container, .highlight-box, .warning-box');
+            
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>
