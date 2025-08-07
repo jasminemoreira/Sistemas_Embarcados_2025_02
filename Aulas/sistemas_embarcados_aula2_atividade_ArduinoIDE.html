@@ -443,8 +443,8 @@
 
             <div class="explanation-box">
                 <h5>📝 Passo a passo da configuração:</h5>
-                <p><strong>1.</strong> Abra Arduino IDE → Arquivo → Preferências<br>
-                <strong>2.</strong> Em "URLs adicionais para Gerenciadores de Placas", cole:</p>
+                <p><strong>1.</strong> Abra Arduino IDE → File → Preferences<br>
+                <strong>2.</strong> Em "Additional boards manager URLs", cole:</p>
             </div>
             
             <div class="code-block">
@@ -452,12 +452,12 @@
                     <span>🔗 URL do STM32 Board Manager</span>
                     <button class="copy-button" onclick="copyCode(this)">Copiar</button>
                 </div>
-<pre><code>https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json</code></pre>
+<pre><code>https://raw.githubusercontent.com/stm32duino/BoardManagerFiles/refs/heads/main/package_stmicroelectronics_index.json</code></pre>
             </div>
 
             <div class="explanation-box">
                 <h5>🔧 Instalar o suporte STM32:</h5>
-                <p><strong>3.</strong> Ferramentas → Gerenciador de Placas<br>
+                <p><strong>3.</strong> Tools → Boards Manager<br>
                 <strong>4.</strong> Pesquise "STM32" e instale <strong>"STM32 MCU based boards by STMicroelectronics"</strong><br>
                 <strong>5.</strong> Aguarde o download (pode demorar alguns minutos)</p>
             </div>
@@ -475,12 +475,24 @@
                 </div>
             </div>
 
+            <div class="explanation-box">
+                <h5>🔍 Sobre o Upload Method:</h5>
+                <p><strong>Mass Storage:</strong> A placa Nucleo aparece como drive USB no computador. O Arduino IDE copia o arquivo .bin para este drive, que programa automaticamente o microcontrolador. É o método mais simples e não requer drivers especiais.</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>📌 Board Part Number</h4>
+                <p>No menu <strong>Board part number</strong>, procure por <strong>"Nucleo F072RB"</strong>. Esta é a configuração específica para nossa placa STM32F072RB Nucleo. Outras opções como "Nucleo C031C6" são para placas diferentes.</p>
+            </div>
+
             <div class="warning-box">
                 <h4>⚠️ Configuração da Placa</h4>
                 <p>Após instalar o suporte STM32, configure:<br>
-                <strong>Ferramentas → Placa →</strong> "Generic STM32F0 series"<br>
+                <strong>Tools → Board → STM32 MCU based boards →</strong> "Nucleo-64"<br>
                 <strong>Board part number →</strong> "Nucleo F072RB"<br>
-                <strong>Upload method →</strong> "STM32CubeProgrammer (SWD)"</p>
+                <strong>Upload method →</strong> "Mass Storage"<br>
+                <strong>U(S)ART support →</strong> "Enabled (generic 'Serial')" (padrão)<br>
+                <strong>Port →</strong> Selecione a porta COM da placa</p>
             </div>
         </div>
 
@@ -630,7 +642,7 @@
             <div class="info-panel">
                 <h4>✅ Teste Prático</h4>
                 <p><strong>1.</strong> Upload do código<br>
-                <strong>2.</strong> Abra o Serial Monitor (Ctrl+Shift+M)<br>
+                <strong>2.</strong> Abra o Serial Monitor (Tools → Serial Monitor)<br>
                 <strong>3.</strong> Pressione o botão azul onboard<br>
                 <strong>4.</strong> Veja o LED verde ligar/desligar a cada pressão</p>
             </div>
@@ -743,7 +755,7 @@
             <div class="info-panel">
                 <h4>✅ Como Testar</h4>
                 <p><strong>1.</strong> Upload do código<br>
-                <strong>2.</strong> Abra Serial Monitor (Ctrl+Shift+M)<br>
+                <strong>2.</strong> Abra Serial Monitor (Tools → Serial Monitor)<br>
                 <strong>3.</strong> Configure baud rate para <strong>115200</strong><br>
                 <strong>4.</strong> Digite comandos: "ON", "OFF", "STATUS"<br>
                 <strong>5.</strong> Pressione Enter para enviar</p>
@@ -891,10 +903,11 @@
         <div class="warning-box">
             <h4>⚠️ Troubleshooting Rápido</h4>
             <ul class="list">
-                <li><strong>Erro de upload:</strong> Verifique se placa está selecionada corretamente</li>
+                <li><strong>Erro de upload:</strong> Verifique se "Nucleo-64" e "Nucleo F072RB" estão selecionados</li>
                 <li><strong>LED não acende:</strong> Confirme que é PA5 (LED2 verde onboard)</li>
-                <li><strong>Serial não funciona:</strong> Configure baud rate 115200</li>
+                <li><strong>Serial não funciona:</strong> Configure baud rate 115200 e verifique porta COM</li>
                 <li><strong>Botão não responde:</strong> PC13 é ativo-baixo (LOW quando pressionado)</li>
+                <li><strong>Upload falha:</strong> Tente desconectar e reconectar USB, ou reset na placa</li>
             </ul>
         </div>
 
