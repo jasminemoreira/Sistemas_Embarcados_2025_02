@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Embarcados I - Aula 3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            color: #1d1d1f;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 60px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .slide-number {
+            color: #2a5298;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .slide-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .slide-subtitle {
+            font-size: 1.4rem;
+            color: #86868b;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .content-section h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-section h3 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+        }
+
+        .content-section p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #424245;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2a5298, #1e3c72);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(42, 82, 152, 0.1);
+        }
+
+        .card h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: #424245;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(42, 82, 152, 0.1);
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .card ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #2a5298;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        .highlight-box p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            position: relative;
+        }
+
+        .comparison-card h4 {
+            color: #2a5298;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #424245;
+            font-weight: 500;
+        }
+
+        .architecture-diagram {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            text-align: center;
+        }
+
+        .memory-table {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+            overflow-x: auto;
+        }
+
+        .memory-table table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .memory-table th {
+            background: #2a5298;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .memory-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(42, 82, 152, 0.1);
+        }
+
+        .memory-table tr:hover {
+            background: rgba(42, 82, 152, 0.05);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(42, 82, 152, 0.9);
+            backdrop-filter: blur(20px);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(134, 134, 139, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            color: #2a5298;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(42, 82, 152, 0.2);
+        }
+
+        .code-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Courier New', Consolas, Monaco, monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            border: 1px solid #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .discussion-box {
+            background: rgba(42, 82, 152, 0.05);
+            border: 2px solid rgba(42, 82, 152, 0.2);
+            border-radius: 16px;
+            padding: 35px;
+            margin: 30px 0;
+        }
+
+        .discussion-box h4 {
+            color: #2a5298;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .memory-map {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            border-left: 4px solid #2a5298;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                width: 95%;
+                padding: 30px;
+                height: 90vh;
+            }
+            
+            .slide-title {
+                font-size: 2.5rem;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .navigation {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .slide-counter {
+                bottom: 20px;
+                left: 20px;
+            }
+            
+            .code-example {
+                font-size: 11px;
+                padding: 15px;
+                line-height: 1.5;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+            
+            .memory-map {
+                font-size: 11px;
+                padding: 15px;
+            }
+            
+            .memory-table {
+                font-size: 12px;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active .content-section {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+
+        <!-- Slide 1: Título da Aula -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="slide-number">Aula 03 - 13/08</div>
+                <h1 class="slide-title">Sistemas de Memória</h1>
+                <p class="slide-subtitle">RAM, ROM, EPROM, EEPROM e FLASH</p>
+            </div>
+            
+            <div class="architecture-diagram">
+                <h3 style="color: #2a5298; margin-bottom: 20px;">Unidade I - Continuação</h3>
+                <p style="color: #86868b; font-size: 1.2rem;">Fundamentos dos sistemas de memória</p>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>Objetivos da Aula</h3>
+                <p>Compreender os diferentes tipos de memória utilizados em sistemas embarcados, suas características, aplicações específicas e como são organizadas e gerenciadas no microcontrolador STM32.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Revisão Rápida -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Revisão</div>
+                <h1 class="slide-title">Revisão da Aula Anterior</h1>
+                <p class="slide-subtitle">Consolidando conceitos de clock e arquitetura</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🎯 Famílias ARM Cortex-M</h4>
+                        <p>M0/M0+ (ultra baixo consumo), M3 (balanceado), M4 (DSP), M7 (alta performance) - cada um otimizado para aplicações específicas.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🚌 Sistema de Barramentos</h4>
+                        <p>AHB (high-performance), APB1/APB2 (peripherals) organizados em matriz para acesso simultâneo e otimização de performance.</p>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Gerenciamento de Clock</h4>
+                        <p>HSI/HSE como fontes, PLL para multiplicação, RCC para controle e diferentes estratégias para performance vs economia.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 DMA e Periféricos</h4>
+                        <p>Direct Memory Access para transferências eficientes e ampla gama de periféricos integrados (GPIO, UART, SPI, I2C).</p>
+                    </div>
+                </div>
+
+                <div class="discussion-box">
+                    <h4>💡 Laboratório da Aula Anterior</h4>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #2a5298;">
+                        <p><strong>Como foi a experiência?</strong> Conseguiram observar as diferenças de consumo entre os modos de clock? Vamos compartilhar os resultados!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Conceitos Fundamentais de Memória -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Fundamentos</div>
+                <h1 class="slide-title">Conceitos de Memória</h1>
+                <p class="slide-subtitle">Características fundamentais dos sistemas de memória</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🏃 Velocidade de Acesso</h4>
+                        <ul>
+                            <li>Tempo de acesso (ns)</li>
+                            <li>Largura de banda (MB/s)</li>
+                            <li>Latência vs throughput</li>
+                            <li>Cache hierarchy</li>
+                            <li>Wait states</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>💾 Volatilidade</h4>
+                        <ul>
+                            <li>Volátil: perde dados sem energia</li>
+                            <li>Não-volátil: mantém dados</li>
+                            <li>Persistência de dados</li>
+                            <li>Backup de energia</li>
+                            <li>Retenção de dados</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>✏️ Capacidade de Escrita</h4>
+                        <ul>
+                            <li>Read-only (ROM)</li>
+                            <li>Write-once (PROM)</li>
+                            <li>Erasable (EPROM)</li>
+                            <li>Electrically erasable (EEPROM)</li>
+                            <li>Random access write (RAM)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>💰 Custo vs Capacidade</h4>
+                        <ul>
+                            <li>Custo por bit</li>
+                            <li>Densidade de armazenamento</li>
+                            <li>Escalabilidade</li>
+                            <li>Trade-offs de design</li>
+                            <li>Hierarquia de memória</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Hierarquia de Memória</h3>
+                    <p>Sistemas embarcados usam hierarquia: registradores (mais rápidos) → cache → RAM → FLASH → storage externo (mais lento, mais barato, maior capacidade)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Memória RAM -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">RAM</div>
+                <h1 class="slide-title">Random Access Memory</h1>
+                <p class="slide-subtitle">Memória volátil de acesso aleatório</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>⚡ SRAM (Static RAM)</h4>
+                        <ul>
+                            <li>Células baseadas em flip-flops</li>
+                            <li>Muito rápida (ns)</li>
+                            <li>Não precisa refresh</li>
+                            <li>Maior consumo de energia</li>
+                            <li>Mais cara, menor densidade</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 DRAM (Dynamic RAM)</h4>
+                        <ul>
+                            <li>Células baseadas em capacitores</li>
+                            <li>Precisa refresh periódico</li>
+                            <li>Menor consumo estático</li>
+                            <li>Maior densidade</li>
+                            <li>Controlador mais complexo</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🎯 RAM no STM32F4</h4>
+                        <ul>
+                            <li>SRAM principal: até 384KB</li>
+                            <li>CCM RAM: 64KB dedicada à CPU</li>
+                            <li>Backup RAM: 4KB com RTC</li>
+                            <li>Zero wait state @ 168MHz</li>
+                            <li>ECC opcional (alguns modelos)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Aplicações Típicas</h4>
+                        <ul>
+                            <li>Variáveis do programa</li>
+                            <li>Stack e heap</li>
+                            <li>Buffers de comunicação</li>
+                            <li>Frame buffers</li>
+                            <li>Cache de dados</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">384KB</div>
+                        <div class="stat-label">SRAM STM32F4</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0ns</div>
+                        <div class="stat-label">Wait States</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">64KB</div>
+                        <div class="stat-label">CCM RAM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Memória ROM e PROM -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">ROM</div>
+                <h1 class="slide-title">Read-Only Memory</h1>
+                <p class="slide-subtitle">Memórias não-voláteis tradicionais</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🏭 ROM (Read-Only Memory)</h4>
+                        <ul>
+                            <li>Programada durante fabricação</li>
+                            <li>Conteúdo definido por máscara</li>
+                            <li>Não pode ser alterada</li>
+                            <li>Custo baixo em grandes volumes</li>
+                            <li>Altamente confiável</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 PROM (Programmable ROM)</h4>
+                        <ul>
+                            <li>Programável uma única vez</li>
+                            <li>Fusíveis ou anti-fusíveis</li>
+                            <li>Programming voltage (~12-25V)</li>
+                            <li>Verificação após programação</li>
+                            <li>OTP (One-Time Programmable)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🎯 Características Gerais</h4>
+                        <ul>
+                            <li>Não-volátil</li>
+                            <li>Acesso rápido para leitura</li>
+                            <li>Densidade alta</li>
+                            <li>Consumo baixo</li>
+                            <li>Vida útil muito longa</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📱 Aplicações</h4>
+                        <ul>
+                            <li>Firmware básico</li>
+                            <li>Bootloaders</li>
+                            <li>Tabelas de lookup</li>
+                            <li>Constantes de calibração</li>
+                            <li>Códigos de segurança</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Contexto Histórico</h3>
+                    <p>ROM e PROM foram fundamentais no desenvolvimento de sistemas embarcados, mas hoje são largamente substituídas por tecnologias mais flexíveis como FLASH, mantendo-se em aplicações específicas de segurança.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Memória EPROM -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">EPROM</div>
+                <h1 class="slide-title">Erasable PROM</h1>
+                <p class="slide-subtitle">Memória programável e apagável por UV</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>💡 Tecnologia UV-EPROM</h4>
+                        <ul>
+                            <li>Transistores com floating gate</li>
+                            <li>Programação por hot electrons</li>
+                            <li>Apagamento por radiação UV</li>
+                            <li>Janela de quartzo no package</li>
+                            <li>Processo de 15-20 minutos</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚙️ Processo de Uso</h4>
+                        <ul>
+                            <li>Apagamento total por UV</li>
+                            <li>Programação byte-a-byte</li>
+                            <li>Verificação de dados</li>
+                            <li>Proteção da janela UV</li>
+                            <li>Ciclos limitados (~1000)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📋 Características</h4>
+                        <ul>
+                            <li>Capacidade: 1KB a 4MB</li>
+                            <li>Retenção: >10 anos</li>
+                            <li>Voltagem de programação: 21-25V</li>
+                            <li>Tempo de acesso: 50-250ns</li>
+                            <li>Package com janela UV</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🏭 Aplicações Históricas</h4>
+                        <ul>
+                            <li>Desenvolvimento de firmware</li>
+                            <li>Sistemas de controle industrial</li>
+                            <li>Computadores pessoais (BIOS)</li>
+                            <li>Instrumentação científica</li>
+                            <li>Sistemas militares/aeroespaciais</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <h4>Vantagens</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 5px 0; border-bottom: 1px solid #eee;">✅ Programável/apagável</li>
+                            <li style="padding: 5px 0; border-bottom: 1px solid #eee;">✅ Boa retenção de dados</li>
+                            <li style="padding: 5px 0; border-bottom: 1px solid #eee;">✅ Confiável</li>
+                            <li style="padding: 5px 0;">✅ Ideal para desenvolvimento</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card">
+                        <h4>Desvantagens</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 5px 0; border-bottom: 1px solid #eee;">❌ Equipamento UV necessário</li>
+                            <li style="padding: 5px 0; border-bottom: 1px solid #eee;">❌ Processo lento</li>
+                            <li style="padding: 5px 0; border-bottom: 1px solid #eee;">❌ Package caro</li>
+                            <li style="padding: 5px 0;">❌ Sensível à luz ambiente</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Memória EEPROM -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">EEPROM</div>
+                <h1 class="slide-title">Electrically Erasable PROM</h1>
+                <p class="slide-subtitle">Memória programável e apagável eletricamente</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>⚡ Tecnologia EEPROM</h4>
+                        <ul>
+                            <li>Dual-gate MOSFET (floating gate)</li>
+                            <li>Programação por tunneling</li>
+                            <li>Apagamento elétrico por byte</li>
+                            <li>Não requer equipamento especial</li>
+                            <li>In-system programming</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Características Técnicas</h4>
+                        <ul>
+                            <li>Capacidade: 128B a 4MB</li>
+                            <li>Endurance: 10K-1M cycles</li>
+                            <li>Retenção: 10-100 anos</li>
+                            <li>Interface: I²C, SPI, paralela</li>
+                            <li>Voltagem: 1.8V-5.5V</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 Operações</h4>
+                        <ul>
+                            <li>Leitura: ~100ns</li>
+                            <li>Escrita: ~5ms por byte</li>
+                            <li>Apagamento: automático na escrita</li>
+                            <li>Page write mode</li>
+                            <li>Write protection disponível</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🎯 Aplicações Modernas</h4>
+                        <ul>
+                            <li>Configurações de sistema</li>
+                            <li>Parâmetros de calibração</li>
+                            <li>Logs de eventos</li>
+                            <li>Serial numbers/MAC addresses</li>
+                            <li>Dados de usuário pequenos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>EEPROM vs Outras Tecnologias</h3>
+                    <p>EEPROM oferece flexibilidade única: escrita/apagamento byte-a-byte, alta endurance, retenção excelente. Ideal para dados que mudam frequentemente mas precisam ser preservados.</p>
+                </div>
+
+                <div class="code-example">
+// Exemplo: Acesso EEPROM via I2C
+#define EEPROM_ADDRESS  0xA0
+#define EEPROM_PAGE_SIZE 32
+
+void EEPROM_WriteByte(uint16_t address, uint8_t data) {
+    uint8_t buffer[3];
+    buffer[0] = (address >> 8) & 0xFF;  // Address high
+    buffer[1] = address & 0xFF;         // Address low  
+    buffer[2] = data;                   // Data
+    
+    HAL_I2C_Master_Transmit(&hi2c1, EEPROM_ADDRESS, 
+                           buffer, 3, 100);
+    HAL_Delay(5); // Write cycle time
+}
+
+uint8_t EEPROM_ReadByte(uint16_t address) {
+    uint8_t buffer[2];
+    uint8_t data;
+    
+    buffer[0] = (address >> 8) & 0xFF;
+    buffer[1] = address & 0xFF;
+    
+    HAL_I2C_Master_Transmit(&hi2c1, EEPROM_ADDRESS, 
+                           buffer, 2, 100);
+    HAL_I2C_Master_Receive(&hi2c1, EEPROM_ADDRESS, 
+                          &data, 1, 100);
+    
+    return data;
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Memória FLASH -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">FLASH</div>
+                <h1 class="slide-title">Memória FLASH</h1>
+                <p class="slide-subtitle">Tecnologia dominante em sistemas embarcados</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🔬 Tecnologia FLASH</h4>
+                        <ul>
+                            <li>Baseada em transistores floating-gate</li>
+                            <li>NOR FLASH: acesso aleatório</li>
+                            <li>NAND FLASH: acesso sequencial</li>
+                            <li>Programação por hot-electron injection</li>
+                            <li>Apagamento por Fowler-Nordheim tunneling</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ NOR vs NAND FLASH</h4>
+                        <ul>
+                            <li><strong>NOR:</strong> XIP (Execute in Place)</li>
+                            <li><strong>NOR:</strong> Acesso byte-wise</li>
+                            <li><strong>NAND:</strong> Maior densidade</li>
+                            <li><strong>NAND:</strong> Menor custo por bit</li>
+                            <li><strong>NAND:</strong> Page/block access</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 STM32F4 FLASH</h4>
+                        <ul>
+                            <li>Capacidade: 128KB a 2MB</li>
+                            <li>Organização em setores</li>
+                            <li>Dual bank (alguns modelos)</li>
+                            <li>Read-while-write capability</li>
+                            <li>Error correction (ECC)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🛡️ Características de Segurança</h4>
+                        <ul>
+                            <li>Read/Write protection</li>
+                            <li>Option bytes</li>
+                            <li>Boot configuration</li>
+                            <li>Mass erase protection</li>
+                            <li>Debug access control</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="memory-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Setor</th>
+                                <th>Tamanho</th>
+                                <th>Endereço Base</th>
+                                <th>Uso Típico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0-3</td>
+                                <td>16KB cada</td>
+                                <td>0x08000000-0x0800FFFF</td>
+                                <td>Bootloader, código crítico</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>64KB</td>
+                                <td>0x08010000-0x0801FFFF</td>
+                                <td>Código principal</td>
+                            </tr>
+                            <tr>
+                                <td>5-11</td>
+                                <td>128KB cada</td>
+                                <td>0x08020000-0x080FFFFF</td>
+                                <td>Aplicação principal</td>
+                            </tr>
+                            <tr>
+                                <td>User sectors</td>
+                                <td>Variável</td>
+                                <td>Configurável</td>
+                                <td>Dados, configuração, logs</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Memory Mapping STM32 -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Memory Map</div>
+                <h1 class="slide-title">Mapeamento de Memória</h1>
+                <p class="slide-subtitle">Organização da memória no STM32F4</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="architecture-diagram">
+                    <h3 style="color: #2a5298; margin-bottom: 30px;">STM32F4 Memory Map</h3>
+                    <div class="memory-map">
+0xFFFF FFFF  +-------------------------+
+             |      Reserved           |
+0xE000 0000  +-------------------------+
+             |   Cortex-M4 Peripherals |  
+0x6000 0000  +-------------------------+
+             |    External Memory      |
+0x5000 0000  +-------------------------+
+             |      Reserved           |
+0x4002 4000  +-------------------------+
+             |    APB2 Peripherals     |
+0x4001 0000  +-------------------------+
+             |    APB1 Peripherals     |
+0x4000 0000  +-------------------------+
+             |    AHB3 Peripherals     |
+0x3000 0000  +-------------------------+
+             |   Backup SRAM (4KB)     |
+0x2003 0000  +-------------------------+
+             |     CCM RAM (64KB)      |
+0x2002 0000  +-------------------------+
+             |    SRAM2 (16KB)         |
+0x2001 C000  +-------------------------+
+             |    SRAM1 (112KB)        |
+0x2000 0000  +-------------------------+
+             |      System Memory      |
+0x1FFF 0000  +-------------------------+
+             |      Option Bytes       |
+0x0810 0000  +-------------------------+
+             |     Flash Memory        |
+             |     (ate 2MB)           |
+0x0800 0000  +-------------------------+
+                    </div>
+                </div>
+
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🚀 FLASH (0x0800 0000)</h4>
+                        <p>Código do programa, constantes, tabelas de lookup. Executado diretamente (XIP). Organizado em setores de tamanhos variados.</p>
+                    </div>
+                    <div class="card">
+                        <h4>💾 SRAM (0x2000 0000)</h4>
+                        <p>Variáveis globais, stack, heap. Acesso de alta velocidade. SRAM1 + SRAM2 totalizando até 192KB.</p>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ CCM RAM (0x2001 0000)</h4>
+                        <p>Core Coupled Memory - acesso exclusivo da CPU. Ideal para stack e dados críticos. 64KB sem interferência de DMA.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 Periféricos (0x4000 0000+)</h4>
+                        <p>Registradores dos periféricos organizados em barramentos APB1, APB2 e AHB para diferentes velocidades.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Gerenciamento de Memória -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Gerenciamento</div>
+                <h1 class="slide-title">Gerenciamento de Memória</h1>
+                <p class="slide-subtitle">Técnicas e estratégias de uso eficiente</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>📊 Linker Script (.ld)</h4>
+                        <ul>
+                            <li>Define seções de memória</li>
+                            <li>Organiza código e dados</li>
+                            <li>Configurações de stack/heap</li>
+                            <li>Placement de seções críticas</li>
+                            <li>Symbol definitions</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🏗️ Seções de Memória</h4>
+                        <ul>
+                            <li><strong>.text:</strong> código executável</li>
+                            <li><strong>.rodata:</strong> constantes</li>
+                            <li><strong>.data:</strong> variáveis inicializadas</li>
+                            <li><strong>.bss:</strong> variáveis não-inicializadas</li>
+                            <li><strong>.stack/.heap:</strong> áreas dinâmicas</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Otimizações</h4>
+                        <ul>
+                            <li>Código em CCM para performance</li>
+                            <li>Constantes em FLASH</li>
+                            <li>Buffers DMA em SRAM específica</li>
+                            <li>Stack overflow protection</li>
+                            <li>Memory pool allocation</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🛡️ Proteção e Segurança</h4>
+                        <ul>
+                            <li>MPU (Memory Protection Unit)</li>
+                            <li>Write protection</li>
+                            <li>Stack canaries</li>
+                            <li>Buffer overflow detection</li>
+                            <li>Secure boot validation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+// Exemplo: Alocacao especifica de memoria
+
+// Variavel em CCM RAM (acesso exclusivo CPU)
+__attribute__((section(".ccmram"))) 
+uint32_t fast_buffer[1024];
+
+// Constante em FLASH
+const uint32_t lookup_table[256] = { /* dados */ };
+
+// Buffer DMA em SRAM
+__attribute__((aligned(4))) 
+uint8_t dma_buffer[512];
+
+// Configuracao no linker script
+MEMORY {
+    FLASH (rx)   : ORIGIN = 0x08000000, LENGTH = 2048K
+    SRAM (rwx)   : ORIGIN = 0x20000000, LENGTH = 192K
+    CCMRAM (rwx) : ORIGIN = 0x10000000, LENGTH = 64K
+}
+
+SECTIONS {
+    .ccmram : {
+        . = ALIGN(4);
+        *(.ccmram)
+        . = ALIGN(4);
+    } >CCMRAM
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Operações com FLASH -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">FLASH Ops</div>
+                <h1 class="slide-title">Operações com FLASH</h1>
+                <p class="slide-subtitle">Programação e gerenciamento da memória FLASH</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>✏️ Programação</h4>
+                        <ul>
+                            <li>Unlock da FLASH</li>
+                            <li>Erase de setores</li>
+                            <li>Program word/halfword/byte</li>
+                            <li>Verificação de dados</li>
+                            <li>Lock da FLASH</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🗑️ Apagamento</h4>
+                        <ul>
+                            <li>Setor por setor</li>
+                            <li>Mass erase (total)</li>
+                            <li>Tempo típico: 0.5-2s</li>
+                            <li>Verificação obrigatória</li>
+                            <li>Estado após erase: 0xFF</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Performance</h4>
+                        <ul>
+                            <li>Leitura: ~30ns @ 168MHz</li>
+                            <li>Wait states configuráveis</li>
+                            <li>Prefetch buffer</li>
+                            <li>Data cache (STM32F7)</li>
+                            <li>Art Accelerator</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 Wear Leveling</h4>
+                        <ul>
+                            <li>Endurance: 10K-100K cycles</li>
+                            <li>Distribuição de escritas</li>
+                            <li>Bad block management</li>
+                            <li>Backup de dados críticos</li>
+                            <li>Health monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+// Exemplo: Operacoes basicas com FLASH
+#include "stm32f4xx_hal.h"
+
+#define USER_FLASH_SECTOR   FLASH_SECTOR_11
+#define USER_FLASH_ADDRESS  0x080E0000
+
+HAL_StatusTypeDef WriteToFlash(uint32_t address, 
+                               uint32_t *data, 
+                               uint32_t size) {
+    HAL_StatusTypeDef status;
+    
+    // Unlock FLASH
+    HAL_FLASH_Unlock();
+    
+    // Erase sector
+    FLASH_EraseInitTypeDef eraseInit;
+    eraseInit.TypeErase = FLASH_TYPEERASE_SECTORS;
+    eraseInit.Sector = USER_FLASH_SECTOR;
+    eraseInit.NbSectors = 1;
+    eraseInit.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+    
+    uint32_t sectorError;
+    status = HAL_FLASHEx_Erase(&eraseInit, &sectorError);
+    
+    if (status == HAL_OK) {
+        // Program data
+        for (uint32_t i = 0; i < size; i++) {
+            status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 
+                                     address + (i * 4), 
+                                     data[i]);
+            if (status != HAL_OK) break;
+        }
+    }
+    
+    // Lock FLASH
+    HAL_FLASH_Lock();
+    return status;
+}</div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Comparativo de Tecnologias -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Comparativo</div>
+                <h1 class="slide-title">Tecnologias de Memória</h1>
+                <p class="slide-subtitle">Comparação detalhada das características</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="memory-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Volatilidade</th>
+                                <th>Velocidade</th>
+                                <th>Endurance</th>
+                                <th>Capacidade</th>
+                                <th>Custo</th>
+                                <th>Aplicação Principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>SRAM</strong></td>
+                                <td>Volátil</td>
+                                <td>Muito Alta</td>
+                                <td>Ilimitada</td>
+                                <td>Baixa-Média</td>
+                                <td>Alto</td>
+                                <td>Variáveis, cache, buffer</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DRAM</strong></td>
+                                <td>Volátil</td>
+                                <td>Alta</td>
+                                <td>Ilimitada</td>
+                                <td>Alta</td>
+                                <td>Médio</td>
+                                <td>Memória principal (PCs)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ROM</strong></td>
+                                <td>Não-volátil</td>
+                                <td>Alta</td>
+                                <td>Ilimitada</td>
+                                <td>Média</td>
+                                <td>Baixo</td>
+                                <td>Firmware fixo</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PROM</strong></td>
+                                <td>Não-volátil</td>
+                                <td>Alta</td>
+                                <td>1 ciclo</td>
+                                <td>Média</td>
+                                <td>Baixo</td>
+                                <td>Programação única</td>
+                            </tr>
+                            <tr>
+                                <td><strong>EPROM</strong></td>
+                                <td>Não-volátil</td>
+                                <td>Alta</td>
+                                <td>~1000</td>
+                                <td>Média</td>
+                                <td>Médio</td>
+                                <td>Desenvolvimento</td>
+                            </tr>
+                            <tr>
+                                <td><strong>EEPROM</strong></td>
+                                <td>Não-volátil</td>
+                                <td>Média</td>
+                                <td>10K-1M</td>
+                                <td>Baixa</td>
+                                <td>Alto</td>
+                                <td>Configurações, dados</td>
+                            </tr>
+                            <tr>
+                                <td><strong>FLASH</strong></td>
+                                <td>Não-volátil</td>
+                                <td>Alta</td>
+                                <td>10K-100K</td>
+                                <td>Alta</td>
+                                <td>Baixo</td>
+                                <td>Código, dados, storage</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">10ns</div>
+                        <div class="stat-label">SRAM Access</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5ms</div>
+                        <div class="stat-label">EEPROM Write</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100K</div>
+                        <div class="stat-label">FLASH Cycles</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10</div>
+                        <div class="stat-label">Years Retention</div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Escolhendo a Tecnologia Certa</h3>
+                    <p><strong>Performance crítica:</strong> SRAM | <strong>Código/firmware:</strong> FLASH | <strong>Configurações:</strong> EEPROM | <strong>Dados temporários:</strong> RAM | <strong>Backup:</strong> FLASH+EEPROM</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Laboratório Proposto -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Laboratório</div>
+                <h1 class="slide-title">Atividade Prática</h1>
+                <p class="slide-subtitle">Explorando sistemas de memória</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🎯 Objetivo</h4>
+                        <p>Implementar um sistema de data logging que demonstre o uso eficiente de diferentes tipos de memória disponíveis no STM32.</p>
+                    </div>
+                    <div class="card">
+                        <h4>📋 Especificações</h4>
+                        <ul>
+                            <li>Buffer circular em SRAM para dados</li>
+                            <li>Configurações em EEPROM externa</li>
+                            <li>Log permanente em FLASH</li>
+                            <li>Análise de memory map</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔧 Implementação</h4>
+                        <ul>
+                            <li>Sensor de temperatura (ADC)</li>
+                            <li>Timestamp com RTC</li>
+                            <li>Interface de configuração</li>
+                            <li>Visualização via UART</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Análise</h4>
+                        <ul>
+                            <li>Utilização de memória (.map file)</li>
+                            <li>Performance de acesso</li>
+                            <li>Endurance testing</li>
+                            <li>Power consumption</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+// Estrutura do sistema de logging
+typedef struct {
+    uint32_t timestamp;
+    float temperature;
+    uint16_t humidity;
+    uint8_t sensor_status;
+} DataEntry_t;
+
+// Buffer circular em SRAM
+#define BUFFER_SIZE 100
+DataEntry_t data_buffer[BUFFER_SIZE];
+uint32_t buffer_head = 0;
+uint32_t buffer_tail = 0;
+
+// Configuracoes em EEPROM
+typedef struct {
+    uint16_t log_interval;     // Intervalo de logging (ms)
+    float temp_threshold;      // Limite de temperatura
+    uint8_t sensor_enabled;    // Sensores habilitados
+    uint32_t magic_number;     // Validacao
+} Config_t;
+
+// Area de FLASH para logs permanentes
+#define LOG_FLASH_SECTOR    FLASH_SECTOR_10
+#define LOG_FLASH_ADDRESS   0x080C0000
+#define MAX_LOG_ENTRIES     1000</div>
+
+                <div class="highlight-box">
+                    <h3>Objetivos de Aprendizagem</h3>
+                    <p>Compreender na prática as características de cada tipo de memória, implementar estratégias eficientes de uso e analisar o impacto no desempenho e confiabilidade do sistema.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Ferramentas de Análise -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Ferramentas</div>
+                <h1 class="slide-title">Ferramentas de Análise</h1>
+                <p class="slide-subtitle">Debugging e otimização de memória</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>📊 STM32CubeIDE</h4>
+                        <ul>
+                            <li>Memory usage analyzer</li>
+                            <li>Live expressions</li>
+                            <li>Memory browser</li>
+                            <li>Static analysis</li>
+                            <li>Build analyzer</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔍 Map File Analysis</h4>
+                        <ul>
+                            <li>Seções de memória</li>
+                            <li>Symbol sizes</li>
+                            <li>Unused functions</li>
+                            <li>Memory fragmentation</li>
+                            <li>Stack/heap usage</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ ST-Link Utilities</h4>
+                        <ul>
+                            <li>Memory programming</li>
+                            <li>Sector management</li>
+                            <li>Option bytes</li>
+                            <li>Protection settings</li>
+                            <li>Verification tools</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🛠️ Debugging Técnicas</h4>
+                        <ul>
+                            <li>Breakpoints em memória</li>
+                            <li>Watch expressions</li>
+                            <li>Memory corruption detection</li>
+                            <li>Stack overflow monitoring</li>
+                            <li>Runtime memory usage</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="discussion-box">
+                    <h4>💡 Dicas de Otimização</h4>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #2a5298;">
+                        <p><strong>1. Linker Optimization:</strong> Use -Os para tamanho, -ffunction-sections e -fdata-sections<br>
+                        <strong>2. Const Data:</strong> Sempre use 'const' para dados read-only<br>
+                        <strong>3. Stack Size:</strong> Configure stack size baseado na análise real<br>
+                        <strong>4. Memory Pool:</strong> Use pools para alocação eficiente<br>
+                        <strong>5. Monitor Usage:</strong> Implemente runtime memory monitoring</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Boas Práticas -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Boas Práticas</div>
+                <h1 class="slide-title">Desenvolvimento Eficiente</h1>
+                <p class="slide-subtitle">Estratégias para uso otimizado de memória</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>🎯 Design Guidelines</h4>
+                        <ul>
+                            <li>Minimize RAM usage</li>
+                            <li>Use appropriate data types</li>
+                            <li>Avoid deep recursion</li>
+                            <li>Pool allocation patterns</li>
+                            <li>Cache-friendly data structures</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔒 Safety & Reliability</h4>
+                        <ul>
+                            <li>Memory barriers e volatile</li>
+                            <li>Buffer overflow protection</li>
+                            <li>Data integrity checks</li>
+                            <li>Graceful degradation</li>
+                            <li>Error recovery strategies</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Performance Tips</h4>
+                        <ul>
+                            <li>Align data structures</li>
+                            <li>Use DMA for bulk transfers</li>
+                            <li>Minimize FLASH wait states</li>
+                            <li>Optimize critical loops</li>
+                            <li>Profile memory access patterns</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔄 Maintenance</h4>
+                        <ul>
+                            <li>Document memory layout</li>
+                            <li>Version control for firmware</li>
+                            <li>Automated testing</li>
+                            <li>Memory usage tracking</li>
+                            <li>Regular code reviews</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+// Exemplos de boas praticas
+
+// 1. Data alignment para performance
+typedef struct __attribute__((packed)) {
+    uint8_t status;      // 1 byte
+    uint8_t _pad[3];     // 3 bytes padding
+    uint32_t timestamp;  // 4 bytes aligned
+    float value;         // 4 bytes aligned
+} OptimizedStruct_t;
+
+// 2. Memory pool para evitar fragmentacao
+#define POOL_SIZE 10
+static DataEntry_t memory_pool[POOL_SIZE];
+static uint32_t pool_bitmap = 0;
+
+DataEntry_t* AllocateEntry(void) {
+    for (int i = 0; i < POOL_SIZE; i++) {
+        if (!(pool_bitmap & (1 << i))) {
+            pool_bitmap |= (1 << i);
+            return &memory_pool[i];
+        }
+    }
+    return NULL; // Pool full
+}
+
+// 3. Volatile para acesso a hardware
+volatile uint32_t *const GPIO_ODR = 
+    (uint32_t*)0x40020014;
+
+// 4. Const para dados read-only
+const uint16_t sine_table[256] = { 
+    /* dados em FLASH */ 
+};</div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Preparação para Próxima Aula -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Próximos Passos</div>
+                <h1 class="slide-title">Preparação Aula 4</h1>
+                <p class="slide-subtitle">Revisão e aprofundamento dos conceitos fundamentais</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="grid-container">
+                    <div class="card">
+                        <h4>📚 Leitura Obrigatória</h4>
+                        <p><strong>Ball, S.</strong> - Embedded Microprocessor Systems, Capítulos 1-3 (revisão)<br>
+                        <strong>STM32F4 Programming Manual</strong> - Seção sobre Cortex-M4 architecture</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔍 Pesquisa Dirigida</h4>
+                        <p>Revisar conceitos de arquitetura ARM, pipeline, modos de operação e fazer conexões entre hardware e software nos projetos.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🛠️ Preparação Prática</h4>
+                        <p>Finalizar laboratório de memória, analisar memory map do projeto, preparar dúvidas sobre conceitos fundamentais.</p>
+                    </div>
+                    <div class="card">
+                        <h4>💡 Checkpoint 1</h4>
+                        <p><strong>20/08 - Próxima aula!</strong> Apresentação do projeto: especificações técnicas, arquitetura escolhida e justificativas.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Checkpoint 1 - Detalhes</h3>
+                    <p>Apresentação de <strong>10 minutos</strong> por grupo: problema escolhido, especificações técnicas, arquitetura de hardware/software, cronograma e distribuição de tarefas. Foco na aplicação dos conceitos da Unidade I.</p>
+                </div>
+
+                <div class="discussion-box">
+                    <h4>❓ Reflexão para Casa</h4>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #2a5298;">
+                        <p><strong>Pensem:</strong> Como as decisões de arquitetura de memória impactam diretamente o sucesso de um projeto embarcado? Que trade-offs vocês fariam entre performance, custo e confiabilidade?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegação -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">
+                ← Anterior
+            </button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
+                Próximo →
+            </button>
+        </div>
+
+        <!-- Contador de slides -->
+        <div class="slide-counter">
+            <span id="slideCounter">1 / 16</span>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            // Update counter
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            if (direction === 1 && currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            } else if (direction === -1 && currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        // Initialize
+        document.getElementById('prevBtn').disabled = true;
+        
+        // Touch support for mobile
+        let startX = 0;
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    changeSlide(1);
+                } else {
+                    changeSlide(-1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

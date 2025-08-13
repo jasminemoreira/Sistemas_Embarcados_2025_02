@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 3 - Sistemas de Memória com Arduino Mega</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(30, 60, 114, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .memory-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .theory-badge {
+            background: linear-gradient(135deg, #6f42c1, #5a2d91);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);
+        }
+
+        .practical-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .step-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 6px solid #2a5298;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .step-title {
+            color: #2a5298;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .memory-theory {
+            background: rgba(111, 66, 193, 0.1);
+            border: 2px solid rgba(111, 66, 193, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .memory-theory h4 {
+            color: #6f42c1;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .memory-table {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+        }
+
+        .memory-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .memory-table th {
+            background: #2a5298;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .memory-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(42, 82, 152, 0.1);
+            font-size: 13px;
+        }
+
+        .memory-table tr:hover {
+            background: rgba(42, 82, 152, 0.05);
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #2a5298;
+            position: relative;
+        }
+
+        .code-header {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 10px 20px;
+            margin: -25px -25px 15px -25px;
+            border-radius: 12px 12px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .copy-button:hover {
+            background: #1e3c72;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .highlight-box h4 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #f57c00;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-panel {
+            background: rgba(40, 167, 69, 0.1);
+            border: 2px solid rgba(40, 167, 69, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-panel h4 {
+            color: #28a745;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .memory-card.ram { border-left-color: #28a745; }
+        .memory-card.flash { border-left-color: #dc3545; }
+        .memory-card.eeprom { border-left-color: #ffc107; }
+
+        .memory-card h5 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .ram h5 { color: #28a745; }
+        .flash h5 { color: #dc3545; }
+        .eeprom h5 { color: #f57c00; }
+
+        .list {
+            margin: 15px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .list li {
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px;
+            font-size: 14px;
+        }
+
+        .list li::before {
+            content: '▶';
+            color: #2a5298;
+            position: absolute;
+            left: 0;
+            font-size: 12px;
+            top: 2px;
+        }
+
+        .circuit-diagram {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid rgba(42, 82, 152, 0.2);
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        .syntax-function { color: #dcdcaa; }
+        .syntax-type { color: #4ec9b0; }
+        .syntax-define { color: #c586c0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge">🧠 Sistemas de Memória</div>
+            <h1 class="title">Arduino Mega - Explorando Memórias</h1>
+            <p class="subtitle">RAM, FLASH, EEPROM na prática - Aula 3 adaptada</p>
+        </div>
+
+        <div class="highlight-box">
+            <h4>🎯 Objetivos da Atividade</h4>
+            <p>Retomar conceitos de GPIO e comunicação da aula 2, aplicando-os para explorar praticamente os diferentes tipos de memória: <strong>SRAM (volátil)</strong> para buffers de dados, <strong>EEPROM (não-volátil)</strong> para configurações persistentes e <strong>FLASH</strong> para código do programa. Demonstrar hierarquia de memória em sistema embarcado real.</p>
+        </div>
+
+        <div class="memory-theory">
+            <h4>🧠 Arduino Mega 2560 - Memórias Disponíveis</h4>
+            <div class="memory-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Tamanho</th>
+                            <th>Volatilidade</th>
+                            <th>Uso Principal</th>
+                            <th>Acesso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>FLASH</strong></td>
+                            <td>256 KB</td>
+                            <td>Não-volátil</td>
+                            <td>Código do programa</td>
+                            <td>Leitura rápida</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SRAM</strong></td>
+                            <td>8 KB</td>
+                            <td>Volátil</td>
+                            <td>Variáveis, stack, heap</td>
+                            <td>Leitura/escrita rápida</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EEPROM</strong></td>
+                            <td>4 KB</td>
+                            <td>Não-volátil</td>
+                            <td>Configurações, dados</td>
+                            <td>Escrita lenta (~3ms)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="memory-card ram">
+                <h5>💚 SRAM (8KB)</h5>
+                <ul class="list">
+                    <li>Volátil - perde dados sem energia</li>
+                    <li>Acesso muito rápido (nanossegundos)</li>
+                    <li>Variáveis globais/locais</li>
+                    <li>Stack e heap</li>
+                    <li>Buffers temporários</li>
+                </ul>
+            </div>
+            <div class="memory-card flash">
+                <h5>🔴 FLASH (256KB)</h5>
+                <ul class="list">
+                    <li>Não-volátil - mantém dados</li>
+                    <li>Leitura rápida</li>
+                    <li>Código do programa</li>
+                    <li>Constantes (const)</li>
+                    <li>Strings em PROGMEM</li>
+                </ul>
+            </div>
+            <div class="memory-card eeprom">
+                <h5>🟡 EEPROM (4KB)</h5>
+                <ul class="list">
+                    <li>Não-volátil eletricamente</li>
+                    <li>Escrita lenta (~3ms/byte)</li>
+                    <li>Configurações persistentes</li>
+                    <li>Dados de calibração</li>
+                    <li>Logs permanentes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Revisão da Aula 2 -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">📋</div>
+                <h2 class="step-title">Revisão: Conceitos da Aula 2</h2>
+            </div>
+            <div class="theory-badge">🔄 Retomada</div>
+            <p style="margin-bottom: 20px;">Antes de explorar memórias, vamos relembrar os conceitos fundamentais da aula anterior que serão base para nossa atividade.</p>
+            
+            <div class="circuit-diagram">
+                <h4 style="color: #2a5298; margin-bottom: 15px;">🔌 Arduino Mega 2560 - Pinos Principais</h4>
+                <div style="text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <strong>💡 LED Onboard:</strong> Pin 13 (LED_BUILTIN)<br>
+                    <strong>🔧 GPIO Digitais:</strong> Pins 2-53 (52 pinos digitais)<br>
+                    <strong>📊 GPIO Analógicos:</strong> A0-A15 (16 pinos analógicos)<br>
+                    <strong>⚡ PWM:</strong> Pins 2-13, 44-46 (suporte PWM)<br>
+                    <strong>📡 Serial:</strong> Serial, Serial1, Serial2, Serial3<br>
+                    <strong>🔌 Alimentação:</strong> 3.3V, 5V, GND
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Material Necessário</h4>
+                <ul class="list">
+                    <li>Arduino Mega 2560</li>
+                    <li>Cabo USB tipo A para B</li>
+                    <li>2 LEDs + resistores 220Ω</li>
+                    <li>2 botões push-button</li>
+                    <li>1 potenciômetro 10kΩ</li>
+                    <li>Protoboard e jumpers</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Projeto Integrado -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title">Sistema de Data Logging Inteligente</h2>
+            </div>
+            <div class="practical-badge">🚀 Projeto Principal</div>
+            <p style="margin-bottom: 20px;">Vamos implementar um sistema completo que demonstra o uso prático dos três tipos de memória do Arduino Mega, integrando GPIO, PWM e comunicação serial.</p>
+            
+            <div class="memory-theory">
+                <h4>🏗️ Arquitetura do Sistema</h4>
+                <p><strong>EEPROM:</strong> Armazena configurações (intervalo de logging, limites)<br>
+                <strong>SRAM:</strong> Buffer circular para dados recentes<br>
+                <strong>FLASH:</strong> Código principal e strings constantes<br>
+                <strong>Funcionalidades:</strong> Leitura de sensores, controle de LEDs, interface serial</p>
+            </div>
+
+            <div class="circuit-diagram">
+                <h4 style="color: #2a5298; margin-bottom: 15px;">🔌 Circuito - Data Logger</h4>
+                <div style="text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <strong>🟢 LED Verde (Status):</strong> Pin 8 → Resistor 220Ω → LED → GND<br>
+                    <strong>🔴 LED Vermelho (Alerta):</strong> Pin 9 → Resistor 220Ω → LED → GND<br>
+                    <strong>🔵 Botão Config:</strong> Pin 2 → Botão → GND (pullup interno)<br>
+                    <strong>🟡 Botão Reset:</strong> Pin 3 → Botão → GND (pullup interno)<br>
+                    <strong>📊 Potenciômetro:</strong> A0 ← Pino central | 5V/GND nas pontas<br>
+                    <strong>💻 Serial Monitor:</strong> USB para comunicação e controle
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>🧠 data_logger_completo.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Sistema de Data Logging Inteligente - Arduino Mega
+ * Demonstra uso prático de SRAM, EEPROM e FLASH
+ * Conceitos: Hierarquia de memória, persistência, buffers
+ */</span>
+
+<span class="syntax-define">#include</span> <span class="syntax-string">&lt;EEPROM.h&gt;</span>
+
+<span class="syntax-comment">// Definições de hardware</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_STATUS</span>    <span class="syntax-number">8</span>    <span class="syntax-comment">// LED verde - status sistema</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_ALERT</span>     <span class="syntax-number">9</span>    <span class="syntax-comment">// LED vermelho - alertas</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BTN_CONFIG</span>    <span class="syntax-number">2</span>    <span class="syntax-comment">// Botão configuração</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BTN_RESET</span>     <span class="syntax-number">3</span>    <span class="syntax-comment">// Botão reset dados</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">SENSOR_PIN</span>    <span class="syntax-function">A0</span>   <span class="syntax-comment">// Potenciômetro simulando sensor</span>
+
+<span class="syntax-comment">// Configurações de memória</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BUFFER_SIZE</span>   <span class="syntax-number">50</span>   <span class="syntax-comment">// Buffer circular em SRAM</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">EEPROM_CONFIG_ADDR</span> <span class="syntax-number">0</span>  <span class="syntax-comment">// Endereço configurações na EEPROM</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">EEPROM_MAGIC</span>  <span class="syntax-number">0xA5</span>  <span class="syntax-comment">// Número mágico para validação</span>
+
+<span class="syntax-comment">// Estrutura de dados armazenada em SRAM</span>
+<span class="syntax-type">struct</span> <span class="syntax-function">DataEntry</span> {
+  <span class="syntax-type">unsigned long</span> timestamp;    <span class="syntax-comment">// Momento da leitura</span>
+  <span class="syntax-type">int</span> sensorValue;             <span class="syntax-comment">// Valor do sensor (0-1023)</span>
+  <span class="syntax-type">float</span> voltage;               <span class="syntax-comment">// Voltagem calculada</span>
+  <span class="syntax-type">bool</span> alertStatus;            <span class="syntax-comment">// Status de alerta</span>
+};
+
+<span class="syntax-comment">// Configurações persistentes na EEPROM</span>
+<span class="syntax-type">struct</span> <span class="syntax-function">Config</span> {
+  <span class="syntax-type">byte</span> magic;                  <span class="syntax-comment">// Validação (EEPROM_MAGIC)</span>
+  <span class="syntax-type">int</span> logInterval;             <span class="syntax-comment">// Intervalo entre leituras (ms)</span>
+  <span class="syntax-type">int</span> alertThreshold;          <span class="syntax-comment">// Limite para alerta (0-1023)</span>
+  <span class="syntax-type">bool</span> alertEnabled;           <span class="syntax-comment">// Alertas habilitados</span>
+  <span class="syntax-type">byte</span> ledBrightness;          <span class="syntax-comment">// Brilho dos LEDs (0-255)</span>
+};
+
+<span class="syntax-comment">// Variáveis globais em SRAM</span>
+<span class="syntax-function">DataEntry</span> dataBuffer[<span class="syntax-function">BUFFER_SIZE</span>];  <span class="syntax-comment">// Buffer circular</span>
+<span class="syntax-type">int</span> bufferHead = <span class="syntax-number">0</span>;                     <span class="syntax-comment">// Ponteiro início buffer</span>
+<span class="syntax-type">int</span> bufferCount = <span class="syntax-number">0</span>;                    <span class="syntax-comment">// Quantidade de dados</span>
+<span class="syntax-function">Config</span> systemConfig;                      <span class="syntax-comment">// Configurações carregadas</span>
+<span class="syntax-type">unsigned long</span> lastLogTime = <span class="syntax-number">0</span>;          <span class="syntax-comment">// Último logging</span>
+<span class="syntax-type">bool</span> statusLedState = <span class="syntax-keyword">false</span>;           <span class="syntax-comment">// Estado LED status</span>
+
+<span class="syntax-comment">// Strings constantes na FLASH (PROGMEM)</span>
+<span class="syntax-keyword">const</span> <span class="syntax-type">char</span> welcome_msg[] <span class="syntax-function">PROGMEM</span> = <span class="syntax-string">"Data Logger Inteligente v1.0"</span>;
+<span class="syntax-keyword">const</span> <span class="syntax-type">char</span> menu_msg[] <span class="syntax-function">PROGMEM</span> = <span class="syntax-string">"Comandos: STATUS, CONFIG, DUMP, RESET, HELP"</span>;
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-comment">// Configurar hardware</span>
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_STATUS</span>, <span class="syntax-string">OUTPUT</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_ALERT</span>, <span class="syntax-string">OUTPUT</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">BTN_CONFIG</span>, <span class="syntax-string">INPUT_PULLUP</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">BTN_RESET</span>, <span class="syntax-string">INPUT_PULLUP</span>);
+  
+  <span class="syntax-comment">// Inicializar comunicação serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">2000</span>);
+  
+  <span class="syntax-comment">// Mostrar mensagem de boas-vindas (da FLASH)</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"=================================="</span>));
+  <span class="syntax-function">printProgmemString</span>(welcome_msg);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"Explorando Sistemas de Memória"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"=================================="</span>));
+  
+  <span class="syntax-comment">// Carregar configurações da EEPROM</span>
+  <span class="syntax-function">loadConfig</span>();
+  
+  <span class="syntax-comment">// Mostrar informações de memória</span>
+  <span class="syntax-function">showMemoryInfo</span>();
+  
+  <span class="syntax-comment">// Exibir menu</span>
+  <span class="syntax-function">printProgmemString</span>(menu_msg);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  
+  <span class="syntax-comment">// Teste inicial dos LEDs</span>
+  <span class="syntax-function">testLEDs</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Processar comandos seriais</span>
+  <span class="syntax-function">processSerialCommands</span>();
+  
+  <span class="syntax-comment">// Verificar botões (GPIO)</span>
+  <span class="syntax-function">checkButtons</span>();
+  
+  <span class="syntax-comment">// Fazer logging se necessário</span>
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - lastLogTime >= systemConfig.logInterval) {
+    <span class="syntax-function">logSensorData</span>();
+    lastLogTime = <span class="syntax-function">millis</span>();
+  }
+  
+  <span class="syntax-comment">// Piscar LED de status</span>
+  <span class="syntax-function">blinkStatusLED</span>();
+  
+  <span class="syntax-function">delay</span>(<span class="syntax-number">50</span>);  <span class="syntax-comment">// Pequena pausa</span>
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Funções Auxiliares -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title">Funções de Gerenciamento de Memória</h2>
+            </div>
+            <div class="memory-badge">💾 Gestão EEPROM</div>
+            <p style="margin-bottom: 20px;">Implementação das funções que demonstram como gerenciar dados persistentes na EEPROM e buffers temporários na SRAM.</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>💾 Funções de Memória - Parte 1</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">// ===============================================</span>
+<span class="syntax-comment">// FUNÇÕES DE GERENCIAMENTO DE MEMÓRIA</span>
+<span class="syntax-comment">// ===============================================</span>
+
+<span class="syntax-comment">// Carrega configurações da EEPROM</span>
+<span class="syntax-type">void</span> <span class="syntax-function">loadConfig</span>() {
+  <span class="syntax-function">EEPROM</span>.<span class="syntax-function">get</span>(<span class="syntax-function">EEPROM_CONFIG_ADDR</span>, systemConfig);
+  
+  <span class="syntax-comment">// Verificar se configuração é válida</span>
+  <span class="syntax-keyword">if</span> (systemConfig.magic != <span class="syntax-function">EEPROM_MAGIC</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"⚙️ Criando configuração padrão..."</span>));
+    <span class="syntax-function">setDefaultConfig</span>();
+    <span class="syntax-function">saveConfig</span>();
+  } <span class="syntax-keyword">else</span> {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"✅ Configuração carregada da EEPROM"</span>));
+  }
+}
+
+<span class="syntax-comment">// Salva configurações na EEPROM</span>
+<span class="syntax-type">void</span> <span class="syntax-function">saveConfig</span>() {
+  <span class="syntax-function">EEPROM</span>.<span class="syntax-function">put</span>(<span class="syntax-function">EEPROM_CONFIG_ADDR</span>, systemConfig);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"💾 Configuração salva na EEPROM"</span>));
+}
+
+<span class="syntax-comment">// Define configuração padrão</span>
+<span class="syntax-type">void</span> <span class="syntax-function">setDefaultConfig</span>() {
+  systemConfig.magic = <span class="syntax-function">EEPROM_MAGIC</span>;
+  systemConfig.logInterval = <span class="syntax-number">2000</span>;        <span class="syntax-comment">// 2 segundos</span>
+  systemConfig.alertThreshold = <span class="syntax-number">800</span>;      <span class="syntax-comment">// Alerta acima 800</span>
+  systemConfig.alertEnabled = <span class="syntax-keyword">true</span>;
+  systemConfig.ledBrightness = <span class="syntax-number">128</span>;       <span class="syntax-comment">// 50% brilho</span>
+}
+
+<span class="syntax-comment">// Adiciona dados ao buffer circular (SRAM)</span>
+<span class="syntax-type">void</span> <span class="syntax-function">addToBuffer</span>(<span class="syntax-type">int</span> sensorValue, <span class="syntax-type">float</span> voltage, <span class="syntax-type">bool</span> alertStatus) {
+  <span class="syntax-comment">// Adicionar nova entrada</span>
+  dataBuffer[bufferHead].timestamp = <span class="syntax-function">millis</span>();
+  dataBuffer[bufferHead].sensorValue = sensorValue;
+  dataBuffer[bufferHead].voltage = voltage;
+  dataBuffer[bufferHead].alertStatus = alertStatus;
+  
+  <span class="syntax-comment">// Avançar ponteiro (circular)</span>
+  bufferHead = (bufferHead + <span class="syntax-number">1</span>) % <span class="syntax-function">BUFFER_SIZE</span>;
+  
+  <span class="syntax-comment">// Atualizar contador (máximo BUFFER_SIZE)</span>
+  <span class="syntax-keyword">if</span> (bufferCount < <span class="syntax-function">BUFFER_SIZE</span>) {
+    bufferCount++;
+  }
+}
+
+<span class="syntax-comment">// Mostra informações sobre uso de memória</span>
+<span class="syntax-type">void</span> <span class="syntax-function">showMemoryInfo</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📊 INFORMAÇÕES DE MEMÓRIA"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"---------------------------"</span>));
+  
+  <span class="syntax-comment">// SRAM usage</span>
+  <span class="syntax-type">int</span> sramUsed = <span class="syntax-keyword">sizeof</span>(dataBuffer) + <span class="syntax-keyword">sizeof</span>(systemConfig) + <span class="syntax-number">100</span>; <span class="syntax-comment">// aproximado</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🟢 SRAM: ~"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(sramUsed);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" bytes usados de 8192"</span>));
+  
+  <span class="syntax-comment">// Buffer info</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📦 Buffer: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(dataBuffer));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" bytes ("</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">BUFFER_SIZE</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" entradas)"</span>));
+  
+  <span class="syntax-comment">// EEPROM info</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🟡 EEPROM: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(systemConfig));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" bytes config de 4096 total"</span>));
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-comment">// Função para imprimir strings da FLASH (PROGMEM)</span>
+<span class="syntax-type">void</span> <span class="syntax-function">printProgmemString</span>(<span class="syntax-keyword">const</span> <span class="syntax-type">char</span> *str) {
+  <span class="syntax-type">char</span> buffer[<span class="syntax-number">50</span>];
+  <span class="syntax-function">strcpy_P</span>(buffer, str);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(buffer);
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Funções de Controle -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title">Controle de Hardware e Interface</h2>
+            </div>
+            <div class="practical-badge">🎮 Controle GPIO</div>
+            <p style="margin-bottom: 20px;">Funções que demonstram controle de GPIO (LEDs, botões) e interface serial, integrando os conceitos da aula 2 com gerenciamento de memória.</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>🎮 Funções de Controle - Parte 2</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">// ===============================================</span>
+<span class="syntax-comment">// FUNÇÕES DE CONTROLE DE HARDWARE</span>
+<span class="syntax-comment">// ===============================================</span>
+
+<span class="syntax-comment">// Lê sensor e adiciona ao buffer</span>
+<span class="syntax-type">void</span> <span class="syntax-function">logSensorData</span>() {
+  <span class="syntax-comment">// Ler valor do sensor (ADC)</span>
+  <span class="syntax-type">int</span> sensorValue = <span class="syntax-function">analogRead</span>(<span class="syntax-function">SENSOR_PIN</span>);
+  <span class="syntax-type">float</span> voltage = (sensorValue * <span class="syntax-number">5.0</span>) / <span class="syntax-number">1023.0</span>;  <span class="syntax-comment">// Conversão para voltagem</span>
+  
+  <span class="syntax-comment">// Verificar condição de alerta</span>
+  <span class="syntax-type">bool</span> alertCondition = (sensorValue > systemConfig.alertThreshold) && 
+                        systemConfig.alertEnabled;
+  
+  <span class="syntax-comment">// Controlar LED de alerta</span>
+  <span class="syntax-keyword">if</span> (alertCondition) {
+    <span class="syntax-function">analogWrite</span>(<span class="syntax-function">LED_ALERT</span>, systemConfig.ledBrightness);
+  } <span class="syntax-keyword">else</span> {
+    <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_ALERT</span>, <span class="syntax-string">LOW</span>);
+  }
+  
+  <span class="syntax-comment">// Adicionar dados ao buffer (SRAM)</span>
+  <span class="syntax-function">addToBuffer</span>(sensorValue, voltage, alertCondition);
+  
+  <span class="syntax-comment">// Log no serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📊 Sensor: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(sensorValue);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" ("</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(voltage, <span class="syntax-number">2</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"V)"</span>));
+  
+  <span class="syntax-keyword">if</span> (alertCondition) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" ⚠️ ALERTA!"</span>));
+  }
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-comment">// Verifica botões (demonstra GPIO como entrada)</span>
+<span class="syntax-type">void</span> <span class="syntax-function">checkButtons</span>() {
+  <span class="syntax-type">static bool</span> lastConfigBtn = <span class="syntax-string">HIGH</span>;
+  <span class="syntax-type">static bool</span> lastResetBtn = <span class="syntax-string">HIGH</span>;
+  
+  <span class="syntax-type">bool</span> configBtn = <span class="syntax-function">digitalRead</span>(<span class="syntax-function">BTN_CONFIG</span>);
+  <span class="syntax-type">bool</span> resetBtn = <span class="syntax-function">digitalRead</span>(<span class="syntax-function">BTN_RESET</span>);
+  
+  <span class="syntax-comment">// Detectar pressão do botão config (borda descendente)</span>
+  <span class="syntax-keyword">if</span> (lastConfigBtn == <span class="syntax-string">HIGH</span> && configBtn == <span class="syntax-string">LOW</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🔧 Botão CONFIG pressionado!"</span>));
+    <span class="syntax-function">toggleAlertSystem</span>();
+    <span class="syntax-function">delay</span>(<span class="syntax-number">200</span>); <span class="syntax-comment">// Debounce simples</span>
+  }
+  
+  <span class="syntax-comment">// Detectar pressão do botão reset</span>
+  <span class="syntax-keyword">if</span> (lastResetBtn == <span class="syntax-string">HIGH</span> && resetBtn == <span class="syntax-string">LOW</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🔄 Botão RESET pressionado!"</span>));
+    <span class="syntax-function">clearBuffer</span>();
+    <span class="syntax-function">delay</span>(<span class="syntax-number">200</span>);
+  }
+  
+  lastConfigBtn = configBtn;
+  lastResetBtn = resetBtn;
+}
+
+<span class="syntax-comment">// Pisca LED de status (demonstra PWM)</span>
+<span class="syntax-type">void</span> <span class="syntax-function">blinkStatusLED</span>() {
+  <span class="syntax-type">static unsigned long</span> lastBlink = <span class="syntax-number">0</span>;
+  
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - lastBlink >= <span class="syntax-number">1000</span>) {
+    statusLedState = !statusLedState;
+    
+    <span class="syntax-keyword">if</span> (statusLedState) {
+      <span class="syntax-function">analogWrite</span>(<span class="syntax-function">LED_STATUS</span>, systemConfig.ledBrightness);
+    } <span class="syntax-keyword">else</span> {
+      <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_STATUS</span>, <span class="syntax-string">LOW</span>);
+    }
+    
+    lastBlink = <span class="syntax-function">millis</span>();
+  }
+}
+
+<span class="syntax-comment">// Teste inicial dos LEDs</span>
+<span class="syntax-type">void</span> <span class="syntax-function">testLEDs</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🔧 Testando LEDs..."</span>));
+  
+  <span class="syntax-comment">// Teste sequencial</span>
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_STATUS</span>, <span class="syntax-string">HIGH</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">500</span>);
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_STATUS</span>, <span class="syntax-string">LOW</span>);
+  
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_ALERT</span>, <span class="syntax-string">HIGH</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">500</span>);
+  <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_ALERT</span>, <span class="syntax-string">LOW</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"✅ LEDs OK"</span>));
+}
+
+<span class="syntax-comment">// Alterna sistema de alertas</span>
+<span class="syntax-type">void</span> <span class="syntax-function">toggleAlertSystem</span>() {
+  systemConfig.alertEnabled = !systemConfig.alertEnabled;
+  <span class="syntax-function">saveConfig</span>();  <span class="syntax-comment">// Salvar na EEPROM</span>
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🚨 Sistema de alertas: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(systemConfig.alertEnabled ? <span class="syntax-function">F</span>(<span class="syntax-string">"HABILITADO"</span>) : <span class="syntax-function">F</span>(<span class="syntax-string">"DESABILITADO"</span>));
+}
+
+<span class="syntax-comment">// Limpa buffer de dados</span>
+<span class="syntax-type">void</span> <span class="syntax-function">clearBuffer</span>() {
+  bufferHead = <span class="syntax-number">0</span>;
+  bufferCount = <span class="syntax-number">0</span>;
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🗑️ Buffer de dados limpo"</span>));
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Interface Serial -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title">Interface Serial Avançada</h2>
+            </div>
+            <div class="practical-badge">📡 Comunicação</div>
+            <p style="margin-bottom: 20px;">Interface completa via UART para monitoramento e controle do sistema, demonstrando comunicação bidirecional e comandos avançados.</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📡 Interface Serial - Parte 3</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">// ===============================================</span>
+<span class="syntax-comment">// INTERFACE SERIAL E COMANDOS</span>
+<span class="syntax-comment">// ===============================================</span>
+
+<span class="syntax-comment">// Processa comandos via serial</span>
+<span class="syntax-type">void</span> <span class="syntax-function">processSerialCommands</span>() {
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">Serial</span>.<span class="syntax-function">available</span>()) {
+    <span class="syntax-type">String</span> command = <span class="syntax-function">Serial</span>.<span class="syntax-function">readString</span>();
+    command.<span class="syntax-function">trim</span>();
+    command.<span class="syntax-function">toUpperCase</span>();
+    
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"💻 Comando: "</span>));
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(command);
+    
+    <span class="syntax-keyword">if</span> (command == <span class="syntax-string">"STATUS"</span>) {
+      <span class="syntax-function">showSystemStatus</span>();
+    } 
+    <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"CONFIG"</span>) {
+      <span class="syntax-function">showConfiguration</span>();
+    }
+    <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"DUMP"</span>) {
+      <span class="syntax-function">dumpBufferData</span>();
+    }
+    <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"RESET"</span>) {
+      <span class="syntax-function">clearBuffer</span>();
+    }
+    <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"MEMORY"</span>) {
+      <span class="syntax-function">showMemoryInfo</span>();
+    }
+    <span class="syntax-keyword">else if</span> (command.<span class="syntax-function">startsWith</span>(<span class="syntax-string">"INTERVAL"</span>)) {
+      <span class="syntax-function">setLogInterval</span>(command);
+    }
+    <span class="syntax-keyword">else if</span> (command.<span class="syntax-function">startsWith</span>(<span class="syntax-string">"THRESHOLD"</span>)) {
+      <span class="syntax-function">setAlertThreshold</span>(command);
+    }
+    <span class="syntax-keyword">else if</span> (command.<span class="syntax-function">startsWith</span>(<span class="syntax-string">"BRIGHTNESS"</span>)) {
+      <span class="syntax-function">setLedBrightness</span>(command);
+    }
+    <span class="syntax-keyword">else if</span> (command == <span class="syntax-string">"HELP"</span>) {
+      <span class="syntax-function">showHelp</span>();
+    }
+    <span class="syntax-keyword">else</span> {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"❌ Comando não reconhecido. Digite HELP"</span>));
+    }
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  }
+}
+
+<span class="syntax-comment">// Mostra status completo do sistema</span>
+<span class="syntax-type">void</span> <span class="syntax-function">showSystemStatus</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📊 STATUS DO SISTEMA"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"==================="</span>));
+  
+  <span class="syntax-comment">// Uptime</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"⏱️ Uptime: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">millis</span>() / <span class="syntax-number">1000</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" segundos"</span>));
+  
+  <span class="syntax-comment">// Último valor do sensor</span>
+  <span class="syntax-type">int</span> currentSensor = <span class="syntax-function">analogRead</span>(<span class="syntax-function">SENSOR_PIN</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📊 Sensor atual: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(currentSensor);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" ("</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>((currentSensor * <span class="syntax-number">5.0</span>) / <span class="syntax-number">1023.0</span>, <span class="syntax-number">2</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"V)"</span>));
+  
+  <span class="syntax-comment">// Buffer info</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📦 Buffer: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(bufferCount);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"/"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">BUFFER_SIZE</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" entradas"</span>));
+  
+  <span class="syntax-comment">// Status de alertas</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"🚨 Alertas: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(systemConfig.alertEnabled ? <span class="syntax-function">F</span>(<span class="syntax-string">"ATIVO"</span>) : <span class="syntax-function">F</span>(<span class="syntax-string">"INATIVO"</span>));
+}
+
+<span class="syntax-comment">// Mostra configurações atuais</span>
+<span class="syntax-type">void</span> <span class="syntax-function">showConfiguration</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"⚙️ CONFIGURAÇÕES ATUAIS"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"========================"</span>));
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"⏱️ Intervalo logging: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(systemConfig.logInterval);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"ms"</span>));
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"⚠️ Limite alerta: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(systemConfig.alertThreshold);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"💡 Brilho LEDs: "</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(systemConfig.ledBrightness);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" ("</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>((systemConfig.ledBrightness * <span class="syntax-number">100</span>) / <span class="syntax-number">255</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"%)"</span>));
+}
+
+<span class="syntax-comment">// Mostra dados do buffer</span>
+<span class="syntax-type">void</span> <span class="syntax-function">dumpBufferData</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📋 DADOS DO BUFFER (SRAM)"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"============================="</span>));
+  
+  <span class="syntax-keyword">if</span> (bufferCount == <span class="syntax-number">0</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📭 Buffer vazio"</span>));
+    <span class="syntax-keyword">return</span>;
+  }
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"Timestamp | Sensor | Voltage | Alert"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"----------|--------|---------|------"</span>));
+  
+  <span class="syntax-comment">// Mostrar dados mais recentes primeiro</span>
+  <span class="syntax-type">int</span> start = (bufferHead - bufferCount + <span class="syntax-function">BUFFER_SIZE</span>) % <span class="syntax-function">BUFFER_SIZE</span>;
+  
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < bufferCount; i++) {
+    <span class="syntax-type">int</span> index = (start + i) % <span class="syntax-function">BUFFER_SIZE</span>;
+    
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(dataBuffer[index].timestamp / <span class="syntax-number">1000</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"s     | "</span>));
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(dataBuffer[index].sensorValue);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"    | "</span>));
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(dataBuffer[index].voltage, <span class="syntax-number">2</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"V   | "</span>));
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(dataBuffer[index].alertStatus ? <span class="syntax-function">F</span>(<span class="syntax-string">"SIM"</span>) : <span class="syntax-function">F</span>(<span class="syntax-string">"NÃO"</span>));
+  }
+}
+
+<span class="syntax-comment">// Funções para alterar configurações</span>
+<span class="syntax-type">void</span> <span class="syntax-function">setLogInterval</span>(<span class="syntax-type">String</span> command) {
+  <span class="syntax-type">int</span> space = command.<span class="syntax-function">indexOf</span>(<span class="syntax-string">' '</span>);
+  <span class="syntax-keyword">if</span> (space > <span class="syntax-number">0</span>) {
+    <span class="syntax-type">int</span> newInterval = command.<span class="syntax-function">substring</span>(space + <span class="syntax-number">1</span>).<span class="syntax-function">toInt</span>();
+    <span class="syntax-keyword">if</span> (newInterval >= <span class="syntax-number">500</span> && newInterval <= <span class="syntax-number">10000</span>) {
+      systemConfig.logInterval = newInterval;
+      <span class="syntax-function">saveConfig</span>();
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"✅ Intervalo alterado para "</span>));
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(newInterval);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"ms"</span>));
+    } <span class="syntax-keyword">else</span> {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"❌ Intervalo deve estar entre 500-10000ms"</span>));
+    }
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">setAlertThreshold</span>(<span class="syntax-type">String</span> command) {
+  <span class="syntax-type">int</span> space = command.<span class="syntax-function">indexOf</span>(<span class="syntax-string">' '</span>);
+  <span class="syntax-keyword">if</span> (space > <span class="syntax-number">0</span>) {
+    <span class="syntax-type">int</span> newThreshold = command.<span class="syntax-function">substring</span>(space + <span class="syntax-number">1</span>).<span class="syntax-function">toInt</span>();
+    <span class="syntax-keyword">if</span> (newThreshold >= <span class="syntax-number">0</span> && newThreshold <= <span class="syntax-number">1023</span>) {
+      systemConfig.alertThreshold = newThreshold;
+      <span class="syntax-function">saveConfig</span>();
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"✅ Limite de alerta alterado para "</span>));
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(newThreshold);
+    } <span class="syntax-keyword">else</span> {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"❌ Limite deve estar entre 0-1023"</span>));
+    }
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">setLedBrightness</span>(<span class="syntax-type">String</span> command) {
+  <span class="syntax-type">int</span> space = command.<span class="syntax-function">indexOf</span>(<span class="syntax-string">' '</span>);
+  <span class="syntax-keyword">if</span> (space > <span class="syntax-number">0</span>) {
+    <span class="syntax-type">int</span> newBrightness = command.<span class="syntax-function">substring</span>(space + <span class="syntax-number">1</span>).<span class="syntax-function">toInt</span>();
+    <span class="syntax-keyword">if</span> (newBrightness >= <span class="syntax-number">0</span> && newBrightness <= <span class="syntax-number">255</span>) {
+      systemConfig.ledBrightness = newBrightness;
+      <span class="syntax-function">saveConfig</span>();
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"✅ Brilho alterado para "</span>));
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(newBrightness);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">F</span>(<span class="syntax-string">" ("</span>));
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>((newBrightness * <span class="syntax-number">100</span>) / <span class="syntax-number">255</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"%)"</span>));
+    } <span class="syntax-keyword">else</span> {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"❌ Brilho deve estar entre 0-255"</span>));
+    }
+  }
+}
+
+<span class="syntax-comment">// Mostra ajuda</span>
+<span class="syntax-type">void</span> <span class="syntax-function">showHelp</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"📖 COMANDOS DISPONÍVEIS"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"========================"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"STATUS         - Mostra status do sistema"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"CONFIG         - Mostra configurações"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"DUMP           - Mostra dados do buffer"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"RESET          - Limpa buffer de dados"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"MEMORY         - Info sobre memória"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"INTERVAL 1000  - Define intervalo (ms)"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"THRESHOLD 500  - Define limite alerta"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"BRIGHTNESS 200 - Define brilho LEDs"</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">F</span>(<span class="syntax-string">"HELP           - Mostra esta ajuda"</span>));
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Experimentos Adicionais -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">🧪</div>
+                <h2 class="step-title">Experimentos de Análise de Memória</h2>
+            </div>
+            <div class="theory-badge">🔬 Análise Prática</div>
+            <p style="margin-bottom: 20px;">Experimentos para observar e compreender o comportamento dos diferentes tipos de memória na prática.</p>
+            
+            <div class="info-panel">
+                <h4>🔍 Experimento 1: Persistência de Dados</h4>
+                <ol style="margin: 0; padding-left: 20px;">
+                    <li>Configure o sistema com INTERVAL 1000 e THRESHOLD 300</li>
+                    <li>Observe que as configurações são salvas na EEPROM</li>
+                    <li>Desconecte e reconecte o Arduino</li>
+                    <li>Digite CONFIG - as configurações persistiram!</li>
+                    <li>Digite MEMORY para ver uso de memória</li>
+                </ol>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Experimento 2: Limite de Buffer (SRAM)</h4>
+                <ol style="margin: 0; padding-left: 20px;">
+                    <li>Configure INTERVAL 100 (logging muito rápido)</li>
+                    <li>Aguarde 1 minuto e digite DUMP</li>
+                    <li>Observe que apenas os últimos 50 dados estão no buffer</li>
+                    <li>Demonstra buffer circular em SRAM limitada</li>
+                    <li>Configure INTERVAL 2000 para voltar ao normal</li>
+                </ol>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🧠 Experimento 3: Uso de FLASH</h4>
+                <p>Observe no código que as strings com <strong>F("...")</strong> são armazenadas na FLASH, não ocupando SRAM preciosa. Sem o F(), as strings ficariam na SRAM limitada. Compare: Serial.println("texto") vs Serial.println(F("texto"))</p>
+            </div>
+
+            <div class="memory-theory">
+                <h4>📊 Análise de Performance</h4>
+                <p><strong>Teste de Velocidade:</strong> Note que alterações na EEPROM (comandos CONFIG) têm delay perceptível (~3ms por byte), enquanto operações em SRAM (DUMP, STATUS) são instantâneas. Demonstra diferença de velocidade entre tipos de memória.</p>
+            </div>
+        </div>
+
+        <!-- Conclusões -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">🎯</div>
+                <h2 class="step-title">Análise Final: Conceitos Demonstrados</h2>
+            </div>
+            <div class="theory-badge">📚 Síntese</div>
+            <p style="margin-bottom: 20px;">Esta atividade demonstrou praticamente todos os conceitos fundamentais estudados nas aulas 2 e 3.</p>
+            
+            <div class="comparison-grid">
+                <div class="memory-card ram">
+                    <h5>💚 SRAM em Ação</h5>
+                    <ul class="list">
+                        <li>Buffer circular de dados</li>
+                        <li>Variáveis globais do sistema</li>
+                        <li>Stack (chamadas de função)</li>
+                        <li>Acesso instantâneo</li>
+                        <li>Perde dados sem energia</li>
+                    </ul>
+                </div>
+                <div class="memory-card flash">
+                    <h5>🔴 FLASH Otimizada</h5>
+                    <ul class="list">
+                        <li>Código do programa completo</li>
+                        <li>Strings constantes (PROGMEM)</li>
+                        <li>Tabelas de lookup</li>
+                        <li>Execute-in-place (XIP)</li>
+                        <li>Preserva dados sem energia</li>
+                    </ul>
+                </div>
+                <div class="memory-card eeprom">
+                    <h5>🟡 EEPROM Persistente</h5>
+                    <ul class="list">
+                        <li>Configurações do usuário</li>
+                        <li>Parâmetros de calibração</li>
+                        <li>Escrita lenta mas confiável</li>
+                        <li>Número mágico para validação</li>
+                        <li>Dados sobrevivem a resets</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🎓 Conceitos Integrados da Aula 2</h4>
+                <p><strong>GPIO:</strong> Controle de LEDs (saída) e botões (entrada) • <strong>PWM:</strong> Controle de brilho com analogWrite() • <strong>ADC:</strong> Leitura do potenciômetro • <strong>UART:</strong> Interface serial bidirecional completa • <strong>Timers:</strong> Implícitos no PWM e delays</p>
+            </div>
+
+            <div class="memory-theory">
+                <h4>🏗️ Hierarquia de Memória Demonstrada</h4>
+                <p><strong>Velocidade:</strong> Registradores (CPU) → SRAM (variáveis) → FLASH (código) → EEPROM (config)<br>
+                <strong>Capacidade:</strong> FLASH (256KB) > SRAM (8KB) > EEPROM (4KB)<br>
+                <strong>Custo por bit:</strong> SRAM (alto) > EEPROM (médio) > FLASH (baixo)<br>
+                <strong>Uso estratégico:</strong> Cada tipo de memória para sua aplicação ideal</p>
+            </div>
+
+            <div class="info-panel">
+                <h4>✅ Objetivos Alcançados</h4>
+                <ul class="list">
+                    <li>Compreensão prática dos tipos de memória</li>
+                    <li>Gestão eficiente de recursos limitados</li>
+                    <li>Uso estratégico de cada tipo de memória</li>
+                    <li>Integração de conceitos de GPIO e comunicação</li>
+                    <li>Desenvolvimento de sistema embarcado completo</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Próximos Passos -->
+        <div class="highlight-box">
+            <h4>🚀 Próximos Passos - Checkpoint 1</h4>
+            <p>Esta atividade consolidou os conceitos fundamentais das aulas 2 e 3. Na próxima aula (20/08), vocês apresentarão o <strong>Checkpoint 1</strong> do projeto final: especificações técnicas, arquitetura escolhida e justificativas baseadas nos conceitos estudados. Use os conhecimentos adquiridos sobre GPIO, comunicação e sistemas de memória para fundamentar suas decisões de projeto!</p>
+        </div>
+
+        <div class="warning-box">
+            <h4>🔧 Troubleshooting</h4>
+            <ul class="list">
+                <li><strong>LEDs não funcionam:</strong> Verifique conexões e polaridade</li>
+                <li><strong>Botões não respondem:</strong> Confirme INPUT_PULLUP e conexão ao GND</li>
+                <li><strong>EEPROM não salva:</strong> Certifique-se que #include &lt;EEPROM.h&gt; está presente</li>
+                <li><strong>Serial lenta:</strong> Configure baud rate 115200 no Serial Monitor</li>
+                <li><strong>Buffer overflow:</strong> É normal - demonstra buffer circular</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('pre code').textContent;
+            
+            navigator.clipboard.writeText(code).then(function() {
+                button.textContent = 'Copiado!';
+                button.style.background = '#4caf50';
+                
+                setTimeout(function() {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#2a5298';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                button.textContent = 'Erro';
+                button.style.background = '#f44336';
+                
+                setTimeout(function() {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#2a5298';
+                }, 2000);
+            });
+        }
+
+        // Animação suave dos elementos ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.step-container, .highlight-box, .warning-box');
+            
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
