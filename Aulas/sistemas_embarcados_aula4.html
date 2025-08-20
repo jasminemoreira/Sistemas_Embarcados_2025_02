@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 4 - Laboratório Integrativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 6px solid #667eea;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .explanation-box {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .explanation-box h4 {
+            color: #28a745;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+
+        .code-header {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 10px 20px;
+            margin: -25px -25px 15px -25px;
+            border-radius: 12px 12px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            user-select: none;
+        }
+
+        .copy-button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .highlight-box h4 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        .syntax-function { color: #dcdcaa; }
+        .syntax-type { color: #4ec9b0; }
+        .syntax-define { color: #c586c0; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge">🎯 Aula 4 - 20/08 - Laboratório Integrativo</div>
+            <h1 class="title">Revisão e Aprofundamento</h1>
+            <p class="subtitle">Conceitos fundamentais na prática + Preparação Checkpoint 1</p>
+        </div>
+
+        <div class="highlight-box">
+            <h4>🎯 Objetivos da Aula</h4>
+            <p>Consolidar os conceitos das aulas 1-3 através de códigos simples e funcionais que demonstrem arquitetura, clock, barramentos e memória usando Arduino como plataforma de aprendizado.</p>
+        </div>
+
+        <!-- Atividade 1: Clock Básico -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">⏰</div>
+                <h2 class="section-title">Atividade 1: Sistema de Clock Básico</h2>
+            </div>
+
+            <div class="explanation-box">
+                <h4>📚 O que este código faz:</h4>
+                <p><strong>Objetivo:</strong> Demonstrar como medir e analisar o sistema de clock do Arduino.</p>
+                <p><strong>Conceitos:</strong> O Arduino Mega usa um cristal de 16MHz. Este código mostra como usar timers para medir tempos precisos e compara com funções como millis() e micros().</p>
+                <p><strong>Aprendizado:</strong> Entender a diferença entre clock do processador e divisores de clock (prescalers).</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>⏰ clock_basico.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Demonstração de Sistema de Clock - Arduino Mega
+ * Mostra como funciona o clock de 16MHz e medições de tempo
+ */</span>
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== DEMONSTRACAO DE CLOCK ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Arduino Mega: 16MHz"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  
+  <span class="syntax-comment">// Teste 1: Medindo precisão do delay</span>
+  <span class="syntax-function">testarPrecisaoDelay</span>();
+  
+  <span class="syntax-comment">// Teste 2: Comparando millis() vs micros()</span>
+  <span class="syntax-function">compararFuncoesTempo</span>();
+  
+  <span class="syntax-comment">// Teste 3: Calculando operações por segundo</span>
+  <span class="syntax-function">medirPerformance</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">testarPrecisaoDelay</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- Teste 1: Precisao do delay() ---"</span>);
+  
+  <span class="syntax-type">unsigned long</span> inicio = <span class="syntax-function">micros</span>();
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>); <span class="syntax-comment">// 1 segundo</span>
+  <span class="syntax-type">unsigned long</span> fim = <span class="syntax-function">micros</span>();
+  
+  <span class="syntax-type">unsigned long</span> tempo_real = fim - inicio;
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Delay solicitado: 1000ms"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">" | Tempo real: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(tempo_real / <span class="syntax-number">1000.0</span>, <span class="syntax-number">3</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"ms"</span>);
+  
+  <span class="syntax-type">float</span> erro = <span class="syntax-function">abs</span>(tempo_real - <span class="syntax-number">1000000</span>) / <span class="syntax-number">1000000.0</span> * <span class="syntax-number">100</span>;
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Erro: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(erro, <span class="syntax-number">3</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"%"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">compararFuncoesTempo</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- Teste 2: millis() vs micros() ---"</span>);
+  
+  <span class="syntax-type">unsigned long</span> inicio_millis = <span class="syntax-function">millis</span>();
+  <span class="syntax-type">unsigned long</span> inicio_micros = <span class="syntax-function">micros</span>();
+  
+  <span class="syntax-comment">// Simular algum processamento</span>
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">1000</span>; i++) {
+    <span class="syntax-keyword">volatile</span> <span class="syntax-type">int</span> dummy = i * <span class="syntax-number">2</span>; <span class="syntax-comment">// Operação simples</span>
+  }
+  
+  <span class="syntax-type">unsigned long</span> fim_millis = <span class="syntax-function">millis</span>();
+  <span class="syntax-type">unsigned long</span> fim_micros = <span class="syntax-function">micros</span>();
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Tempo em millis(): "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(fim_millis - inicio_millis);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"ms"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Tempo em micros(): "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(fim_micros - inicio_micros);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"us"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">medirPerformance</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- Teste 3: Performance do Processador ---"</span>);
+  
+  <span class="syntax-type">unsigned long</span> inicio = <span class="syntax-function">micros</span>();
+  <span class="syntax-type">long</span> resultado = <span class="syntax-number">0</span>;
+  
+  <span class="syntax-comment">// 10.000 operações matemáticas simples</span>
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">long</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">10000</span>; i++) {
+    resultado += i;
+  }
+  
+  <span class="syntax-type">unsigned long</span> fim = <span class="syntax-function">micros</span>();
+  <span class="syntax-type">unsigned long</span> tempo_total = fim - inicio;
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"10.000 operacoes em: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(tempo_total);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"us"</span>);
+  
+  <span class="syntax-type">float</span> ops_por_segundo = <span class="syntax-number">10000.0</span> / (tempo_total / <span class="syntax-number">1000000.0</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Operacoes por segundo: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(ops_por_segundo, <span class="syntax-number">0</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Comparacao: STM32F4 seria ~10x mais rapido!"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Mostrar uptime a cada 5 segundos</span>
+  <span class="syntax-type">static unsigned long</span> ultimo_print = <span class="syntax-number">0</span>;
+  
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - ultimo_print >= <span class="syntax-number">5000</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"⏱️ Sistema funcionando ha: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">millis</span>() / <span class="syntax-number">1000</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" segundos"</span>);
+    
+    ultimo_print = <span class="syntax-function">millis</span>();
+  }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Atividade 2: GPIO e LEDs -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">💡</div>
+                <h2 class="section-title">Atividade 2: GPIO e Controle de LEDs</h2>
+            </div>
+
+            <div class="explanation-box">
+                <h4>📚 O que este código faz:</h4>
+                <p><strong>Objetivo:</strong> Demonstrar controle básico de GPIO com LEDs RGB.</p>
+                <p><strong>Conceitos:</strong> Configuração de pinos como saída, uso de PWM para controle de brilho, mistura de cores.</p>
+                <p><strong>Conexões:</strong> LED RGB nos pinos 9(R), 10(G), 11(B) com resistores de 220Ω.</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>💡 led_rgb_basico.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Controle de LED RGB - Demonstração de GPIO e PWM
+ * Conectar: LED R->Pin9, LED G->Pin10, LED B->Pin11
+ */</span>
+
+<span class="syntax-comment">// Definições dos pinos</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_RED</span>   <span class="syntax-number">9</span>   <span class="syntax-comment">// PWM pin</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_GREEN</span> <span class="syntax-number">10</span>  <span class="syntax-comment">// PWM pin</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_BLUE</span>  <span class="syntax-number">11</span>  <span class="syntax-comment">// PWM pin</span>
+
+<span class="syntax-type">int</span> contador = <span class="syntax-number">0</span>;
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  
+  <span class="syntax-comment">// Configurar pinos como saída</span>
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_RED</span>, <span class="syntax-string">OUTPUT</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_GREEN</span>, <span class="syntax-string">OUTPUT</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_BLUE</span>, <span class="syntax-string">OUTPUT</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== CONTROLE DE LED RGB ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Demonstrando GPIO e PWM"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  
+  <span class="syntax-comment">// Teste inicial - acender cada cor</span>
+  <span class="syntax-function">testarCores</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">testarCores</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Testando cores basicas..."</span>);
+  
+  <span class="syntax-comment">// Vermelho</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🔴 Vermelho"</span>);
+  <span class="syntax-function">setColor</span>(<span class="syntax-number">255</span>, <span class="syntax-number">0</span>, <span class="syntax-number">0</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);
+  
+  <span class="syntax-comment">// Verde</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🟢 Verde"</span>);
+  <span class="syntax-function">setColor</span>(<span class="syntax-number">0</span>, <span class="syntax-number">255</span>, <span class="syntax-number">0</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);
+  
+  <span class="syntax-comment">// Azul</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🔵 Azul"</span>);
+  <span class="syntax-function">setColor</span>(<span class="syntax-number">0</span>, <span class="syntax-number">0</span>, <span class="syntax-number">255</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);
+  
+  <span class="syntax-comment">// Branco</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"⚪ Branco"</span>);
+  <span class="syntax-function">setColor</span>(<span class="syntax-number">255</span>, <span class="syntax-number">255</span>, <span class="syntax-number">255</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);
+  
+  <span class="syntax-comment">// Desligar</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"⚫ Desligado"</span>);
+  <span class="syntax-function">setColor</span>(<span class="syntax-number">0</span>, <span class="syntax-number">0</span>, <span class="syntax-number">0</span>);
+  <span class="syntax-function">delay</span>(<span class="syntax-number">1000</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Iniciando efeito rainbow..."</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">setColor</span>(<span class="syntax-type">int</span> red, <span class="syntax-type">int</span> green, <span class="syntax-type">int</span> blue) {
+  <span class="syntax-comment">// Usar analogWrite para PWM (0-255)</span>
+  <span class="syntax-function">analogWrite</span>(<span class="syntax-function">LED_RED</span>, red);
+  <span class="syntax-function">analogWrite</span>(<span class="syntax-function">LED_GREEN</span>, green);
+  <span class="syntax-function">analogWrite</span>(<span class="syntax-function">LED_BLUE</span>, blue);
+  
+  <span class="syntax-comment">// Mostrar valores no Serial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"RGB: ("</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(red);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">", "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(green);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">", "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(blue);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">")"</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Efeito rainbow - cores mudando suavemente</span>
+  <span class="syntax-type">int</span> red, green, blue;
+  
+  <span class="syntax-comment">// Calcular cores do rainbow baseado no contador</span>
+  <span class="syntax-keyword">if</span> (contador < <span class="syntax-number">85</span>) {
+    red = contador * <span class="syntax-number">3</span>;
+    green = <span class="syntax-number">255</span> - contador * <span class="syntax-number">3</span>;
+    blue = <span class="syntax-number">0</span>;
+  } <span class="syntax-keyword">else if</span> (contador < <span class="syntax-number">170</span>) {
+    contador -= <span class="syntax-number">85</span>;
+    red = <span class="syntax-number">255</span> - contador * <span class="syntax-number">3</span>;
+    green = <span class="syntax-number">0</span>;
+    blue = contador * <span class="syntax-number">3</span>;
+  } <span class="syntax-keyword">else</span> {
+    contador -= <span class="syntax-number">170</span>;
+    red = <span class="syntax-number">0</span>;
+    green = contador * <span class="syntax-number">3</span>;
+    blue = <span class="syntax-number">255</span> - contador * <span class="syntax-number">3</span>;
+  }
+  
+  <span class="syntax-function">setColor</span>(red, green, blue);
+  
+  <span class="syntax-comment">// Incrementar contador para próxima cor</span>
+  contador++;
+  <span class="syntax-keyword">if</span> (contador >= <span class="syntax-number">255</span>) {
+    contador = <span class="syntax-number">0</span>;
+  }
+  
+  <span class="syntax-function">delay</span>(<span class="syntax-number">50</span>); <span class="syntax-comment">// Velocidade do efeito</span>
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Atividade 3: Comunicação Serial -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">📡</div>
+                <h2 class="section-title">Atividade 3: Comunicação Serial Básica</h2>
+            </div>
+
+            <div class="explanation-box">
+                <h4>📚 O que este código faz:</h4>
+                <p><strong>Objetivo:</strong> Demonstrar comunicação serial (UART) e processamento de comandos.</p>
+                <p><strong>Conceitos:</strong> Protocolo UART, buffer de recepção, parsing de comandos simples.</p>
+                <p><strong>Como usar:</strong> Digite comandos no Serial Monitor: "LED:1" (ligar), "LED:0" (desligar), "STATUS" (info).</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>📡 comunicacao_serial.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Comunicação Serial - Demonstração de UART
+ * Permite controlar LED via comandos seriais
+ */</span>
+
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_PIN</span> <span class="syntax-number">13</span> <span class="syntax-comment">// LED interno do Arduino</span>
+
+<span class="syntax-type">String</span> comando = <span class="syntax-string">""</span>;         <span class="syntax-comment">// Buffer para comando recebido</span>
+<span class="syntax-type">bool</span> comando_completo = <span class="syntax-keyword">false</span>; <span class="syntax-comment">// Flag de comando pronto</span>
+<span class="syntax-type">bool</span> led_estado = <span class="syntax-keyword">false</span>;      <span class="syntax-comment">// Estado atual do LED</span>
+<span class="syntax-type">int</span> comandos_recebidos = <span class="syntax-number">0</span>;    <span class="syntax-comment">// Contador de comandos</span>
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">pinMode</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">OUTPUT</span>);
+  
+  <span class="syntax-comment">// Reservar espaço para o buffer</span>
+  comando.<span class="syntax-function">reserve</span>(<span class="syntax-number">200</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== COMUNICACAO SERIAL ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Arduino Mega UART: 115200 baud"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Comandos disponiveis:"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- LED:1  -> Ligar LED"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- LED:0  -> Desligar LED"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- STATUS -> Mostrar status"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- HELP   -> Mostrar ajuda"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"> "</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Processar comando quando estiver completo</span>
+  <span class="syntax-keyword">if</span> (comando_completo) {
+    <span class="syntax-function">processarComando</span>();
+    <span class="syntax-comment">// Limpar buffer para próximo comando</span>
+    comando = <span class="syntax-string">""</span>;
+    comando_completo = <span class="syntax-keyword">false</span>;
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"> "</span>);
+  }
+  
+  <span class="syntax-comment">// Piscar LED se estiver ligado (para mostrar que está funcionando)</span>
+  <span class="syntax-keyword">if</span> (led_estado) {
+    <span class="syntax-type">static unsigned long</span> ultimo_pisca = <span class="syntax-number">0</span>;
+    <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - ultimo_pisca > <span class="syntax-number">500</span>) {
+      <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, !<span class="syntax-function">digitalRead</span>(<span class="syntax-function">LED_PIN</span>));
+      ultimo_pisca = <span class="syntax-function">millis</span>();
+    }
+  }
+}
+
+<span class="syntax-comment">// Função chamada automaticamente quando chega dado serial</span>
+<span class="syntax-type">void</span> <span class="syntax-function">serialEvent</span>() {
+  <span class="syntax-keyword">while</span> (<span class="syntax-function">Serial</span>.<span class="syntax-function">available</span>()) {
+    <span class="syntax-comment">// Ler próximo caractere</span>
+    <span class="syntax-type">char</span> novo_char = (<span class="syntax-type">char</span>)<span class="syntax-function">Serial</span>.<span class="syntax-function">read</span>();
+    
+    <span class="syntax-comment">// Se for enter, comando está completo</span>
+    <span class="syntax-keyword">if</span> (novo_char == <span class="syntax-string">'\n'</span>) {
+      comando_completo = <span class="syntax-keyword">true</span>;
+    } <span class="syntax-keyword">else if</span> (novo_char != <span class="syntax-string">'\r'</span>) {
+      <span class="syntax-comment">// Adicionar ao buffer (ignorar \r)</span>
+      comando += novo_char;
+    }
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">processarComando</span>() {
+  comandos_recebidos++;
+  comando.<span class="syntax-function">toUpperCase</span>(); <span class="syntax-comment">// Converter para maiúscula</span>
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Comando recebido: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(comando);
+  
+  <span class="syntax-keyword">if</span> (comando == <span class="syntax-string">"LED:1"</span>) {
+    led_estado = <span class="syntax-keyword">true</span>;
+    <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">HIGH</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"✅ LED ligado (modo pisca)"</span>);
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"LED:0"</span>) {
+    led_estado = <span class="syntax-keyword">false</span>;
+    <span class="syntax-function">digitalWrite</span>(<span class="syntax-function">LED_PIN</span>, <span class="syntax-string">LOW</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"❌ LED desligado"</span>);
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"STATUS"</span>) {
+    <span class="syntax-function">mostrarStatus</span>();
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"HELP"</span>) {
+    <span class="syntax-function">mostrarAjuda</span>();
+    
+  } <span class="syntax-keyword">else</span> {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"❓ Comando desconhecido: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(comando);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Digite HELP para ver comandos"</span>);
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarStatus</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- STATUS DO SISTEMA ---"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"⏱️ Uptime: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">millis</span>() / <span class="syntax-number">1000</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" segundos"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"💡 LED: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(led_estado ? <span class="syntax-string">"LIGADO"</span> : <span class="syntax-string">"DESLIGADO"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📨 Comandos processados: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(comandos_recebidos);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🔧 UART: 115200 baud, 8N1"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarAjuda</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- COMANDOS DISPONIVEIS ---"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"LED:1  -> Liga LED (modo pisca)"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"LED:0  -> Desliga LED"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"STATUS -> Mostra informacoes do sistema"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"HELP   -> Mostra esta ajuda"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Digite comandos e pressione ENTER"</span>);
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Atividade 4: Monitoramento de Memória -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">💾</div>
+                <h2 class="section-title">Atividade 4: Monitor de Memória Simples</h2>
+            </div>
+
+            <div class="explanation-box">
+                <h4>📚 O que este código faz:</h4>
+                <p><strong>Objetivo:</strong> Demonstrar como monitorar o uso de memória RAM no Arduino.</p>
+                <p><strong>Conceitos:</strong> Stack vs Heap, memória livre, como variáveis consomem RAM.</p>
+                <p><strong>Aprendizado:</strong> Entender limitações de memória em sistemas embarcados (8KB no Arduino Mega).</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>💾 monitor_memoria.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Monitor de Memória - Arduino Mega
+ * Demonstra como monitorar uso de RAM (8KB total)
+ */</span>
+
+<span class="syntax-comment">// Variáveis globais para teste</span>
+<span class="syntax-type">char</span> buffer_teste[<span class="syntax-number">100</span>];  <span class="syntax-comment">// 100 bytes</span>
+<span class="syntax-type">int</span> numeros[<span class="syntax-number">50</span>];         <span class="syntax-comment">// 50*2 = 100 bytes</span>
+<span class="syntax-type">String</span> texto = <span class="syntax-string">"Arduino Mega tem 8KB de RAM"</span>;
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== MONITOR DE MEMORIA ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Arduino Mega: 8192 bytes de SRAM"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  
+  <span class="syntax-comment">// Mostrar estado inicial</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== ESTADO INICIAL ==="</span>);
+  <span class="syntax-function">mostrarMemoria</span>(<span class="syntax-string">"Inicializacao"</span>);
+  
+  <span class="syntax-comment">// Testar consumo de memória</span>
+  <span class="syntax-function">testarConsumoMemoria</span>();
+}
+
+<span class="syntax-type">int</span> <span class="syntax-function">calcularRAMlivre</span>() {
+  <span class="syntax-comment">// Truque para calcular RAM livre</span>
+  <span class="syntax-type">extern int</span> __heap_start, *__brkval;
+  <span class="syntax-type">int</span> v;
+  <span class="syntax-keyword">return</span> (<span class="syntax-type">int</span>) &v - (__brkval == <span class="syntax-number">0</span> ? (<span class="syntax-type">int</span>) &__heap_start : (<span class="syntax-type">int</span>) __brkval);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarMemoria</span>(<span class="syntax-type">String</span> momento) {
+  <span class="syntax-type">int</span> ram_livre = <span class="syntax-function">calcularRAMlivre</span>();
+  <span class="syntax-type">int</span> ram_usada = <span class="syntax-number">8192</span> - ram_livre;
+  <span class="syntax-type">float</span> percentual_uso = (ram_usada / <span class="syntax-number">8192.0</span>) * <span class="syntax-number">100</span>;
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📊 "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(momento);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">":"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"   RAM Livre: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(ram_livre);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"   RAM Usada: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(ram_usada);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">" bytes ("</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(percentual_uso, <span class="syntax-number">1</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"%)"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">testarConsumoMemoria</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== TESTE DE CONSUMO ==="</span>);
+  
+  <span class="syntax-comment">// Alocar buffer local (na stack)</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Criando buffer local de 500 bytes..."</span>);
+  <span class="syntax-type">char</span> buffer_local[<span class="syntax-number">500</span>];
+  
+  <span class="syntax-comment">// Preencher buffer para forçar alocação</span>
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">500</span>; i++) {
+    buffer_local[i] = <span class="syntax-string">'A'</span> + (i % <span class="syntax-number">26</span>);
+  }
+  
+  <span class="syntax-function">mostrarMemoria</span>(<span class="syntax-string">"Com buffer local"</span>);
+  
+  <span class="syntax-comment">// Simular uso intensivo de String (heap)</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Criando Strings dinamicas..."</span>);
+  <span class="syntax-type">String</span> texto_grande = <span class="syntax-string">""</span>;
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">10</span>; i++) {
+    texto_grande += <span class="syntax-string">"Arduino Mega eh otimo para aprender! "</span>;
+  }
+  
+  <span class="syntax-function">mostrarMemoria</span>(<span class="syntax-string">"Com Strings grandes"</span>);
+  
+  <span class="syntax-comment">// Mostrar informações sobre variáveis</span>
+  <span class="syntax-function">mostrarInfoVariaveis</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarInfoVariaveis</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== INFO SOBRE VARIAVEIS ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📍 buffer_teste[100] em: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">int</span>)buffer_teste, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📍 numeros[50] em: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">int</span>)numeros, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Tamanhos dos tipos:"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"- char: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(<span class="syntax-type">char</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" byte"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"- int: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(<span class="syntax-type">int</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"- long: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(<span class="syntax-type">long</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"- float: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(<span class="syntax-type">float</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Monitoramento contínuo a cada 10 segundos</span>
+  <span class="syntax-type">static unsigned long</span> ultimo_check = <span class="syntax-number">0</span>;
+  
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - ultimo_check >= <span class="syntax-number">10000</span>) {
+    <span class="syntax-function">mostrarMemoria</span>(<span class="syntax-string">"Monitoramento continuo"</span>);
+    
+    <span class="syntax-comment">// Alertar se RAM baixa</span>
+    <span class="syntax-type">int</span> ram_livre = <span class="syntax-function">calcularRAMlivre</span>();
+    <span class="syntax-keyword">if</span> (ram_livre < <span class="syntax-number">1000</span>) {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"⚠️ ALERTA: RAM baixa!"</span>);
+    }
+    
+    ultimo_check = <span class="syntax-function">millis</span>();
+  }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Checkpoint Info -->
+        <div class="highlight-box">
+            <h4>🎯 Checkpoint 1 - Preparação</h4>
+            <p><strong>Apresentação do Projeto (10 minutos por grupo):</strong></p>
+            <p>• <strong>Especificações:</strong> Problema, requisitos funcionais e não-funcionais</p>
+            <p>• <strong>Arquitetura:</strong> Hardware STM32 escolhido, periféricos, software</p>
+            <p>• <strong>Justificativas:</strong> Por que STM32F4? Como arquitetura ARM se adequa?</p>
+            <p>• <strong>Cronograma:</strong> Distribuição de tarefas, marcos, riscos</p>
+            <p><strong>💡 Dica:</strong> Usem os conceitos dos códigos de hoje para justificar as escolhas técnicas!</p>
+        </div>
+
+        <!-- Síntese Final -->
+        <div class="highlight-box" style="background: linear-gradient(135deg, #28a745, #20c997);">
+            <h4>🎓 Síntese da Aula</h4>
+            <p>Os códigos de hoje são <strong>funcionais e simples</strong>, demonstrando conceitos fundamentais que vocês aplicarão no STM32:</p>
+            <p>• <strong>Clock:</strong> Medição de tempo e performance</p>
+            <p>• <strong>GPIO:</strong> Controle de hardware (LEDs, sensores)</p>
+            <p>• <strong>UART:</strong> Comunicação serial para debug e interface</p>
+            <p>• <strong>Memória:</strong> Gestão eficiente de RAM limitada</p>
+            <p>No STM32, esses conceitos se expandem com mais recursos, mas os princípios são os mesmos!</p>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('pre code').textContent;
+            
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = code;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(code).then(function() {
+                        showCopySuccess(button);
+                    }).catch(function(err) {
+                        fallbackCopy(button, tempTextArea);
+                    });
+                } else {
+                    fallbackCopy(button, tempTextArea);
+                }
+            } catch (err) {
+                showCopyError(button);
+            } finally {
+                document.body.removeChild(tempTextArea);
+            }
+        }
+
+        function fallbackCopy(button, tempTextArea) {
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess(button);
+                } else {
+                    showCopyError(button);
+                }
+            } catch (err) {
+                showCopyError(button);
+            }
+        }
+
+        function showCopySuccess(button) {
+            const originalText = button.textContent;
+            const originalClass = button.className;
+            
+            button.textContent = 'Copiado!';
+            button.className = originalClass + ' success';
+            
+            setTimeout(function() {
+                button.textContent = originalText;
+                button.className = originalClass;
+            }, 2000);
+        }
+
+        function showCopyError(button) {
+            const originalText = button.textContent;
+            const originalClass = button.className;
+            
+            button.textContent = 'Erro';
+            button.className = originalClass + ' error';
+            
+            setTimeout(function() {
+                button.textContent = originalText;
+                button.className = originalClass;
+            }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.section, .highlight-box');
+            
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
