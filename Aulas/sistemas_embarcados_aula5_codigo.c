@@ -7,13 +7,14 @@
 // Definições de constantes para melhor organização do código
 #define BAUDRATE 9600      // Velocidade da comunicação serial
 #define DELAY_TIME 2000    // Tempo entre atualizações (2 segundos)
+#define ESPACO 5
 
 // Array que representa o tabuleiro do jogo da velha
 // Usamos char para economizar memória (1 byte por posição)
 char tabuleiro[3][3] = {
-  {'1', '2', '3'},  // Linha 1
-  {'4', '5', '6'},  // Linha 2
-  {'7', '8', '9'}   // Linha 3
+  {'-', '-', '-'},  // Linha 1
+  {'-', '-', '-'},  // Linha 2
+  {'-', '-', '-'}   // Linha 3
 };
 
 void setup() {
@@ -32,8 +33,12 @@ void setup() {
   Serial.println("=== SISTEMA JOGO DA VELHA ===");
   Serial.println("Inicializando tabuleiro...");
   Serial.println();
+
+
 }
 
+char casa = 0;
+char jogador = 'X';
 void loop() {
   /*
    * Função loop: executada repetidamente após o setup
@@ -48,6 +53,17 @@ void loop() {
   
   // Aguarda o tempo definido antes da próxima impressão
   delay(DELAY_TIME);
+
+  casa = Serial.read();
+  if (casa){
+    jogar(casa-48,jogador);
+    if (jogador=='X'){
+      jogador = 'O';
+    }else{
+      jogador = 'X';
+    }   
+  }
+
 }
 
 void imprimirTabuleiro() {
@@ -85,9 +101,23 @@ void imprimirTabuleiro() {
       Serial.println("-----------");
     }
   }
-  
-  Serial.println();  // Linha em branco para melhor legibilidade
+
+  for (int i=0; i<=ESPACO; i++){
+    Serial.println();  // Linha em branco para melhor legibilidade
+  }
 }
+
+
+void jogar(int casa, char jogador){
+  int n = casa - 1;
+  int linha = int(n/3);
+  int coluna = n - 3*(linha);
+  tabuleiro[linha][coluna] = jogador;
+}
+
+
+
+
 
 // Função adicional para demonstrar uso de memória (opcional)
 void informacoesMemoria() {
