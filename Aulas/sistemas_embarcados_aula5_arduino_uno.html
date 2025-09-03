@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 5 - Laboratório Integrativo - Arduino Uno</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 6px solid #667eea;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .explanation-box {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .explanation-box h4 {
+            color: #28a745;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+
+        .code-header {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 10px 20px;
+            margin: -25px -25px 15px -25px;
+            border-radius: 12px 12px 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            user-select: none;
+        }
+
+        .copy-button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .highlight-box h4 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .circuit-box {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: #333;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .circuit-box h4 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        .syntax-function { color: #dcdcaa; }
+        .syntax-type { color: #4ec9b0; }
+        .syntax-define { color: #c586c0; }
+        .syntax-operator { color: #d4d4d4; font-weight: bold; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge">🎯 Aula 5 - Arduino Uno - Laboratório Integrativo</div>
+            <h1 class="title">Registradores e Operadores Bit-a-Bit</h1>
+            <p class="subtitle">Manipulação direta de hardware + Ponteiros + Controle via Serial</p>
+        </div>
+
+        <div class="highlight-box">
+            <h4>🎯 Objetivos da Aula</h4>
+            <p>Dominar a manipulação direta de registradores usando operadores bit-a-bit, compreender ponteiros para acesso à memória, e implementar controle avançado via comunicação serial com o Arduino Uno no Tinkercad.</p>
+        </div>
+
+        <div class="circuit-box">
+            <h4>🔧 Circuito Necessário (Tinkercad)</h4>
+            <p><strong>LEDs:</strong> 8 LEDs nos pinos 0-7 (PORTD) com resistores 220Ω</p>
+            <p><strong>Push-buttons:</strong> 4 botões nos pinos 8-11 (PORTB bits 0-3) com pull-up interno</p>
+            <p><strong>Potenciômetro:</strong> No pino A0 para teste de ADC</p>
+            <p><strong>Serial:</strong> Conexão USB para comunicação</p>
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Importante - Arduino Uno</h4>
+            <p><strong>Pinos 0 e 1:</strong> São usados para comunicação serial (RX/TX). Os LEDs nesses pinos podem interferir na comunicação, mas funcionarão no Tinkercad.</p>
+            <p><strong>Registradores:</strong> Arduino Uno usa PORTD (pinos 0-7) e PORTB (pinos 8-13) ao invés de PORTA/PORTC do Mega.</p>
+        </div>
+
+        <!-- Atividade 1: Manipulação de Registradores -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">⚙️</div>
+                <h2 class="section-title">Atividade 1: Controle Direto de Registradores</h2>
+            </div>
+
+            <div class="explanation-box">
+                <h4>📚 O que este código faz:</h4>
+                <p><strong>Objetivo:</strong> Demonstrar manipulação direta dos registradores PORTD e PORTB do Arduino Uno.</p>
+                <p><strong>Conceitos:</strong> Registradores DDR (direção), PORT (saída), PIN (entrada), manipulação bit-a-bit.</p>
+                <p><strong>Aprendizado:</strong> Diferença entre digitalWrite() e acesso direto aos registradores (muito mais rápido!).</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>⚙️ controle_registradores_uno.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Manipulação Direta de Registradores - Arduino Uno
+ * Demonstra operadores bit-a-bit e acesso direto ao hardware
+ * LEDs: Pinos 0-7 (PORTD)
+ * Botões: Pinos 8-11 (PORTB bits 0-3, com pull-up)
+ */</span>
+
+<span class="syntax-comment">// Definições para facilitar leitura</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_PORT</span>     <span class="syntax-function">PORTD</span>    <span class="syntax-comment">// Registrador de saída dos LEDs</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">LED_DDR</span>      <span class="syntax-function">DDRD</span>     <span class="syntax-comment">// Registrador de direção dos LEDs</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BUTTON_PORT</span>  <span class="syntax-function">PORTB</span>    <span class="syntax-comment">// Pull-ups dos botões</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BUTTON_DDR</span>   <span class="syntax-function">DDRB</span>     <span class="syntax-comment">// Direção dos botões</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BUTTON_PIN</span>   <span class="syntax-function">PINB</span>     <span class="syntax-comment">// Leitura dos botões</span>
+
+<span class="syntax-comment">// Máscaras para operações bit-a-bit</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">TODOS_LEDS</span>   <span class="syntax-number">0xFF</span>     <span class="syntax-comment">// 11111111 - todos os 8 bits</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BOTAO_0</span>      <span class="syntax-number">0x01</span>     <span class="syntax-comment">// 00000001 - bit 0 (pino 8)</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BOTAO_1</span>      <span class="syntax-number">0x02</span>     <span class="syntax-comment">// 00000010 - bit 1 (pino 9)</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BOTAO_2</span>      <span class="syntax-number">0x04</span>     <span class="syntax-comment">// 00000100 - bit 2 (pino 10)</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">BOTAO_3</span>      <span class="syntax-number">0x08</span>     <span class="syntax-comment">// 00001000 - bit 3 (pino 11)</span>
+<span class="syntax-define">#define</span> <span class="syntax-function">MASCARA_BOTOES</span> <span class="syntax-number">0x0F</span>   <span class="syntax-comment">// 00001111 - bits 0-3</span>
+
+<span class="syntax-type">uint8_t</span> padrao_atual = <span class="syntax-number">0x00</span>;
+<span class="syntax-type">uint8_t</span> velocidade = <span class="syntax-number">100</span>;
+<span class="syntax-type">bool</span> modo_automatico = <span class="syntax-keyword">false</span>;
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  
+  <span class="syntax-comment">// Configurar LEDs como saída (PORTD - pinos 0-7)</span>
+  <span class="syntax-function">LED_DDR</span> = <span class="syntax-function">TODOS_LEDS</span>; <span class="syntax-comment">// Todos os pinos como saída</span>
+  <span class="syntax-function">LED_PORT</span> = <span class="syntax-number">0x00</span>;        <span class="syntax-comment">// Todos os LEDs desligados</span>
+  
+  <span class="syntax-comment">// Configurar botões como entrada com pull-up (PORTB bits 0-3)</span>
+  <span class="syntax-function">BUTTON_DDR</span> <span class="syntax-operator">&=</span> <span class="syntax-operator">~</span><span class="syntax-function">MASCARA_BOTOES</span>; <span class="syntax-comment">// Bits 0-3 como entrada</span>
+  <span class="syntax-function">BUTTON_PORT</span> <span class="syntax-operator">|=</span> <span class="syntax-function">MASCARA_BOTOES</span>;  <span class="syntax-comment">// Ativar pull-up nos bits 0-3</span>
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== CONTROLE DE REGISTRADORES - ARDUINO UNO ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Comandos via Serial:"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- SET:0xFF   -> Define padrão (hex)"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- SHIFT:L    -> Desloca esquerda"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- SHIFT:R    -> Desloca direita"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- AUTO:ON/OFF -> Modo automático"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- SPEED:100  -> Velocidade (ms)"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- REGS       -> Status registradores"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Hardware: LEDs(0-7), Botões(8-11), Pot(A0)"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  
+  <span class="syntax-comment">// Teste inicial dos LEDs</span>
+  <span class="syntax-function">testeInicial</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">testeInicial</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Teste dos LEDs..."</span>);
+  
+  <span class="syntax-comment">// Acender um LED por vez</span>
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">8</span>; i++) {
+    <span class="syntax-function">LED_PORT</span> = <span class="syntax-number">1</span> <span class="syntax-operator"><<</span> i; <span class="syntax-comment">// Deslocamento bit-a-bit</span>
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"LED pino "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(i);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">" - Registro PORTD: 0x"</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">LED_PORT</span>, <span class="syntax-function">HEX</span>);
+    <span class="syntax-function">delay</span>(<span class="syntax-number">200</span>);
+  }
+  
+  <span class="syntax-function">LED_PORT</span> = <span class="syntax-number">0x00</span>; <span class="syntax-comment">// Apagar todos</span>
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Teste concluído. Sistema pronto!"</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Processar comandos seriais</span>
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">Serial</span>.<span class="syntax-function">available</span>()) {
+    <span class="syntax-function">processarComando</span>();
+  }
+  
+  <span class="syntax-comment">// Verificar botões físicos</span>
+  <span class="syntax-function">verificarBotoes</span>();
+  
+  <span class="syntax-comment">// Modo automático</span>
+  <span class="syntax-keyword">if</span> (modo_automatico) {
+    <span class="syntax-type">static unsigned long</span> ultimo_shift = <span class="syntax-number">0</span>;
+    <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - ultimo_shift >= velocidade) {
+      <span class="syntax-function">rotacionarEsquerda</span>();
+      ultimo_shift = <span class="syntax-function">millis</span>();
+    }
+  }
+  
+  <span class="syntax-comment">// Atualizar LEDs</span>
+  <span class="syntax-function">LED_PORT</span> = padrao_atual;
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">verificarBotoes</span>() {
+  <span class="syntax-type">static uint8_t</span> botoes_anterior = <span class="syntax-number">0xFF</span>;
+  <span class="syntax-type">uint8_t</span> botoes_atual = <span class="syntax-function">BUTTON_PIN</span>; <span class="syntax-comment">// Leitura direta do registrador</span>
+  
+  <span class="syntax-comment">// Detectar botões pressionados (transição 1->0 devido ao pull-up)</span>
+  <span class="syntax-type">uint8_t</span> botoes_pressionados = botoes_anterior & ~botoes_atual;
+  
+  <span class="syntax-keyword">if</span> (botoes_pressionados & <span class="syntax-function">BOTAO_0</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🔴 Botão pino 8: Rotação esquerda"</span>);
+    <span class="syntax-function">rotacionarEsquerda</span>();
+  }
+  
+  <span class="syntax-keyword">if</span> (botoes_pressionados & <span class="syntax-function">BOTAO_1</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🟡 Botão pino 9: Rotação direita"</span>);
+    <span class="syntax-function">rotacionarDireita</span>();
+  }
+  
+  <span class="syntax-keyword">if</span> (botoes_pressionados & <span class="syntax-function">BOTAO_2</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🟢 Botão pino 10: Inverter padrão"</span>);
+    padrao_atual = <span class="syntax-operator">~</span>padrao_atual; <span class="syntax-comment">// Operador NOT bit-a-bit</span>
+  }
+  
+  <span class="syntax-keyword">if</span> (botoes_pressionados & <span class="syntax-function">BOTAO_3</span>) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🔵 Botão pino 11: Padrão aleatório"</span>);
+    padrao_atual = <span class="syntax-function">random</span>(<span class="syntax-number">0</span>, <span class="syntax-number">256</span>);
+  }
+  
+  botoes_anterior = botoes_atual;
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">rotacionarEsquerda</span>() {
+  <span class="syntax-comment">// Salvar bit mais significativo</span>
+  <span class="syntax-type">uint8_t</span> bit_msb = padrao_atual & <span class="syntax-number">0x80</span>; <span class="syntax-comment">// Máscara 10000000</span>
+  
+  <span class="syntax-comment">// Deslocar esquerda e adicionar MSB na posição 0</span>
+  padrao_atual = (padrao_atual << <span class="syntax-number">1</span>) | (bit_msb ? <span class="syntax-number">1</span> : <span class="syntax-number">0</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"⬅️ Rotação esquerda: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(padrao_atual, <span class="syntax-function">HEX</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">rotacionarDireita</span>() {
+  <span class="syntax-comment">// Salvar bit menos significativo</span>
+  <span class="syntax-type">uint8_t</span> bit_lsb = padrao_atual & <span class="syntax-number">0x01</span>; <span class="syntax-comment">// Máscara 00000001</span>
+  
+  <span class="syntax-comment">// Deslocar direita e adicionar LSB na posição 7</span>
+  padrao_atual = (padrao_atual >> <span class="syntax-number">1</span>) | (bit_lsb ? <span class="syntax-number">0x80</span> : <span class="syntax-number">0x00</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"➡️ Rotação direita: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(padrao_atual, <span class="syntax-function">HEX</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">processarComando</span>() {
+  <span class="syntax-type">String</span> comando = <span class="syntax-function">Serial</span>.<span class="syntax-function">readString</span>();
+  comando.<span class="syntax-function">trim</span>();
+  comando.<span class="syntax-function">toUpperCase</span>();
+  
+  <span class="syntax-keyword">if</span> (comando.<span class="syntax-function">startsWith</span>(<span class="syntax-string">"SET:"</span>)) {
+    <span class="syntax-type">String</span> valor = comando.<span class="syntax-function">substring</span>(<span class="syntax-number">4</span>);
+    padrao_atual = <span class="syntax-function">strtol</span>(valor.<span class="syntax-function">c_str</span>(), <span class="syntax-function">NULL</span>, <span class="syntax-number">16</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"✅ Padrão definido: 0x"</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(padrao_atual, <span class="syntax-function">HEX</span>);
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"SHIFT:L"</span>) {
+    <span class="syntax-function">rotacionarEsquerda</span>();
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"SHIFT:R"</span>) {
+    <span class="syntax-function">rotacionarDireita</span>();
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"AUTO:ON"</span>) {
+    modo_automatico = <span class="syntax-keyword">true</span>;
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"🔄 Modo automático ativado"</span>);
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"AUTO:OFF"</span>) {
+    modo_automatico = <span class="syntax-keyword">false</span>;
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"⏹️ Modo automático desativado"</span>);
+    
+  } <span class="syntax-keyword">else if</span> (comando.<span class="syntax-function">startsWith</span>(<span class="syntax-string">"SPEED:"</span>)) {
+    velocidade = comando.<span class="syntax-function">substring</span>(<span class="syntax-number">6</span>).<span class="syntax-function">toInt</span>();
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"⚡ Velocidade: "</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(velocidade);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"ms"</span>);
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"REGS"</span>) {
+    <span class="syntax-function">mostrarRegistradores</span>();
+    
+  } <span class="syntax-keyword">else</span> {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"❌ Comando inválido"</span>);
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarRegistradores</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- STATUS DOS REGISTRADORES (Arduino Uno) ---"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"DDRD  (direção LEDs pinos 0-7): 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">DDRD</span>, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"PORTD (saída LEDs pinos 0-7):   0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">PORTD</span>, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"DDRB  (direção botões 8-11):    0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">DDRB</span>, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"PINB  (leitura botões 8-11):    0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-function">PINB</span>, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Padrão atual em binário:"</span>);
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">7</span>; i >= <span class="syntax-number">0</span>; i--) {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>((padrao_atual >> i) & <span class="syntax-number">1</span>);
+  }
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" (pinos 7-0)"</span>);
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Atividade 2: Ponteiros e Memória -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">🧠</div>
+                <h2 class="section-title">Atividade 2: Ponteiros e Acesso à Memória</h2>
+            </div>
+
+            <div class="explanation-box">
+                <h4>📚 O que este código faz:</h4>
+                <p><strong>Objetivo:</strong> Demonstrar uso de ponteiros para acessar memória e registradores diretamente.</p>
+                <p><strong>Conceitos:</strong> Ponteiros, dereferenciamento, aritmética de ponteiros, volatile.</p>
+                <p><strong>Aplicação:</strong> Mapeamento de memória para controle de hardware, otimização de performance.</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>🧠 ponteiros_memoria_uno.ino</span>
+                    <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                </div>
+<pre><code><span class="syntax-comment">/*
+ * Demonstração de Ponteiros e Acesso à Memória
+ * Arduino Uno - Manipulação via ponteiros
+ */</span>
+
+<span class="syntax-comment">// Ponteiros para registradores (endereços fixos na memória)</span>
+<span class="syntax-type">volatile uint8_t</span>* <span class="syntax-keyword">const</span> led_ddr = &<span class="syntax-function">DDRD</span>;    <span class="syntax-comment">// Direção PORTD</span>
+<span class="syntax-type">volatile uint8_t</span>* <span class="syntax-keyword">const</span> led_port = &<span class="syntax-function">PORTD</span>;  <span class="syntax-comment">// Saída PORTD</span>
+<span class="syntax-type">volatile uint8_t</span>* <span class="syntax-keyword">const</span> btn_pin = &<span class="syntax-function">PINB</span>;    <span class="syntax-comment">// Leitura PORTB</span>
+<span class="syntax-type">volatile uint8_t</span>* <span class="syntax-keyword">const</span> adc_reg = &<span class="syntax-function">ADCH</span>;   <span class="syntax-comment">// ADC high byte</span>
+
+<span class="syntax-comment">// Buffer para demonstração de aritmética de ponteiros</span>
+<span class="syntax-type">uint8_t</span> buffer[<span class="syntax-number">16</span>] = {<span class="syntax-number">0</span>};
+<span class="syntax-type">uint8_t</span>* ptr_buffer = buffer;
+
+<span class="syntax-comment">// Estrutura para organização de dados</span>
+<span class="syntax-keyword">typedef struct</span> {
+  <span class="syntax-type">uint16_t</span> endereco;
+  <span class="syntax-type">uint8_t</span> valor;
+  <span class="syntax-type">char</span> nome[<span class="syntax-number">10</span>];
+} <span class="syntax-type">registro_t</span>;
+
+<span class="syntax-type">registro_t</span> registros[<span class="syntax-number">4</span>];
+<span class="syntax-type">registro_t</span>* ptr_regs = registros;
+
+<span class="syntax-type">void</span> <span class="syntax-function">setup</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">begin</span>(<span class="syntax-number">115200</span>);
+  
+  <span class="syntax-comment">// Configurar ADC para leitura do potenciômetro</span>
+  <span class="syntax-function">ADMUX</span> = <span class="syntax-number">0x60</span>;   <span class="syntax-comment">// AVCC reference, canal 0, left adjusted</span>
+  <span class="syntax-function">ADCSRA</span> = <span class="syntax-number">0x87</span>; <span class="syntax-comment">// ADC enable, prescaler 128</span>
+  
+  <span class="syntax-comment">// Configurar LEDs via ponteiro</span>
+  *led_ddr = <span class="syntax-number">0xFF</span>;  <span class="syntax-comment">// Todos como saída</span>
+  *led_port = <span class="syntax-number">0x00</span>; <span class="syntax-comment">// Todos desligados</span>
+  
+  <span class="syntax-comment">// Configurar botões (PORTB bits 0-3)</span>
+  <span class="syntax-function">DDRB</span> &= <span class="syntax-number">0xF0</span>;  <span class="syntax-comment">// Bits 0-3 como entrada</span>
+  <span class="syntax-function">PORTB</span> |= <span class="syntax-number">0x0F</span>; <span class="syntax-comment">// Ativar pull-up</span>
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"=== PONTEIROS E MEMORIA - ARDUINO UNO ==="</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"Comandos:"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- MEM        -> Info de memória"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- BUFFER:XX  -> Preencher buffer (hex)"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- DUMP       -> Mostrar buffer"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- REGS       -> Info registradores"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"- ADC        -> Ler potenciômetro"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+  
+  <span class="syntax-comment">// Inicializar estrutura de registradores</span>
+  <span class="syntax-function">inicializarRegistros</span>();
+  
+  <span class="syntax-comment">// Demonstrar endereços de memória</span>
+  <span class="syntax-function">mostrarEnderecos</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">inicializarRegistros</span>() {
+  <span class="syntax-comment">// Usar aritmética de ponteiros para preencher estruturas</span>
+  (ptr_regs + <span class="syntax-number">0</span>)->endereco = (<span class="syntax-type">uint16_t</span>)&<span class="syntax-function">DDRD</span>;
+  <span class="syntax-function">strcpy</span>((ptr_regs + <span class="syntax-number">0</span>)->nome, <span class="syntax-string">"DDRD"</span>);
+  
+  (ptr_regs + <span class="syntax-number">1</span>)->endereco = (<span class="syntax-type">uint16_t</span>)&<span class="syntax-function">PORTD</span>;
+  <span class="syntax-function">strcpy</span>((ptr_regs + <span class="syntax-number">1</span>)->nome, <span class="syntax-string">"PORTD"</span>);
+  
+  (ptr_regs + <span class="syntax-number">2</span>)->endereco = (<span class="syntax-type">uint16_t</span>)&<span class="syntax-function">PINB</span>;
+  <span class="syntax-function">strcpy</span>((ptr_regs + <span class="syntax-number">2</span>)->nome, <span class="syntax-string">"PINB"</span>);
+  
+  (ptr_regs + <span class="syntax-number">3</span>)->endereco = (<span class="syntax-type">uint16_t</span>)&<span class="syntax-function">ADCH</span>;
+  <span class="syntax-function">strcpy</span>((ptr_regs + <span class="syntax-number">3</span>)->nome, <span class="syntax-string">"ADCH"</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarEnderecos</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- ENDERECOS NA MEMORIA ---"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🔍 Buffer[16]:     0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">uint16_t</span>)buffer, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🔍 Registros[4]:  0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">uint16_t</span>)registros, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🔍 DDRD:          0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">uint16_t</span>)&<span class="syntax-function">DDRD</span>, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🔍 PORTD:         0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">uint16_t</span>)&<span class="syntax-function">PORTD</span>, <span class="syntax-function">HEX</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">loop</span>() {
+  <span class="syntax-comment">// Processar comandos</span>
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">Serial</span>.<span class="syntax-function">available</span>()) {
+    <span class="syntax-function">processarComandoPonteiros</span>();
+  }
+  
+  <span class="syntax-comment">// Mostrar valor do ADC nos LEDs via ponteiros</span>
+  <span class="syntax-type">static unsigned long</span> ultimo_adc = <span class="syntax-number">0</span>;
+  <span class="syntax-keyword">if</span> (<span class="syntax-function">millis</span>() - ultimo_adc >= <span class="syntax-number">100</span>) {
+    <span class="syntax-function">lerADCviaPonteiro</span>();
+    ultimo_adc = <span class="syntax-function">millis</span>();
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">lerADCviaPonteiro</span>() {
+  <span class="syntax-comment">// Iniciar conversão</span>
+  <span class="syntax-function">ADCSRA</span> |= (<span class="syntax-number">1</span> << <span class="syntax-function">ADSC</span>);
+  
+  <span class="syntax-comment">// Aguardar conclusão</span>
+  <span class="syntax-keyword">while</span> (<span class="syntax-function">ADCSRA</span> & (<span class="syntax-number">1</span> << <span class="syntax-function">ADSC</span>));
+  
+  <span class="syntax-comment">// Ler resultado via ponteiro</span>
+  <span class="syntax-type">uint8_t</span> valor_adc = *adc_reg;
+  
+  <span class="syntax-comment">// Mostrar nos LEDs via ponteiro</span>
+  *led_port = valor_adc;
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">processarComandoPonteiros</span>() {
+  <span class="syntax-type">String</span> comando = <span class="syntax-function">Serial</span>.<span class="syntax-function">readString</span>();
+  comando.<span class="syntax-function">trim</span>();
+  comando.<span class="syntax-function">toUpperCase</span>();
+  
+  <span class="syntax-keyword">if</span> (comando == <span class="syntax-string">"MEM"</span>) {
+    <span class="syntax-function">mostrarInfoMemoria</span>();
+    
+  } <span class="syntax-keyword">else if</span> (comando.<span class="syntax-function">startsWith</span>(<span class="syntax-string">"BUFFER:"</span>)) {
+    <span class="syntax-type">String</span> valor = comando.<span class="syntax-function">substring</span>(<span class="syntax-number">7</span>);
+    <span class="syntax-function">preencherBuffer</span>(<span class="syntax-function">strtol</span>(valor.<span class="syntax-function">c_str</span>(), <span class="syntax-function">NULL</span>, <span class="syntax-number">16</span>));
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"DUMP"</span>) {
+    <span class="syntax-function">mostrarBuffer</span>();
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"REGS"</span>) {
+    <span class="syntax-function">mostrarRegistrosviaPonteiro</span>();
+    
+  } <span class="syntax-keyword">else if</span> (comando == <span class="syntax-string">"ADC"</span>) {
+    <span class="syntax-function">lerEMostrarADC</span>();
+    
+  } <span class="syntax-keyword">else</span> {
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"❌ Comando inválido"</span>);
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">preencherBuffer</span>(<span class="syntax-type">uint8_t</span> padrao) {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📄 Preenchendo buffer com: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(padrao, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-comment">// Usar aritmética de ponteiros</span>
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">16</span>; i++) {
+    *(ptr_buffer + i) = padrao + i; <span class="syntax-comment">// Incrementar valor</span>
+  }
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"✅ Buffer preenchido!"</span>);
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarBuffer</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- DUMP DO BUFFER ---"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"Endereço base: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>((<span class="syntax-type">uint16_t</span>)ptr_buffer, <span class="syntax-function">HEX</span>);
+  
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">16</span>; i++) {
+    <span class="syntax-keyword">if</span> (i % <span class="syntax-number">8</span> == <span class="syntax-number">0</span>) {
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"\n0x"</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>((<span class="syntax-type">uint16_t</span>)(ptr_buffer + i), <span class="syntax-function">HEX</span>);
+      <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">": "</span>);
+    }
+    
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"0x"</span>);
+    <span class="syntax-keyword">if</span> (*(ptr_buffer + i) < <span class="syntax-number">0x10</span>) <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"0"</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(*(ptr_buffer + i), <span class="syntax-function">HEX</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">" "</span>);
+  }
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>();
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarRegistrosviaPonteiro</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- REGISTRADORES VIA PONTEIROS ---"</span>);
+  
+  <span class="syntax-keyword">for</span> (<span class="syntax-type">int</span> i = <span class="syntax-number">0</span>; i < <span class="syntax-number">4</span>; i++) {
+    <span class="syntax-type">registro_t</span>* reg = ptr_regs + i; <span class="syntax-comment">// Aritmética de ponteiros</span>
+    reg->valor = *(<span class="syntax-type">volatile uint8_t</span>*)(reg->endereco); <span class="syntax-comment">// Ler via ponteiro</span>
+    
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(reg->nome);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">" (0x"</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(reg->endereco, <span class="syntax-function">HEX</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"): 0x"</span>);
+    <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(reg->valor, <span class="syntax-function">HEX</span>);
+  }
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">lerEMostrarADC</span>() {
+  <span class="syntax-comment">// Forçar leitura do ADC</span>
+  <span class="syntax-function">ADCSRA</span> |= (<span class="syntax-number">1</span> << <span class="syntax-function">ADSC</span>);
+  <span class="syntax-keyword">while</span> (<span class="syntax-function">ADCSRA</span> & (<span class="syntax-number">1</span> << <span class="syntax-function">ADSC</span>));
+  
+  <span class="syntax-type">uint8_t</span> valor = *adc_reg;
+  <span class="syntax-type">float</span> tensao = (valor / <span class="syntax-number">255.0</span>) * <span class="syntax-number">5.0</span>;
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🔬 ADC via ponteiro: 0x"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(valor, <span class="syntax-function">HEX</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">" ("</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(tensao, <span class="syntax-number">2</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"V)"</span>);
+  
+  <span class="syntax-comment">// Mostrar nos LEDs</span>
+  *led_port = valor;
+}
+
+<span class="syntax-type">void</span> <span class="syntax-function">mostrarInfoMemoria</span>() {
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">"--- INFORMAÇÕES DE MEMÓRIA ---"</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🧠 Tamanho de ponteiro: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(<span class="syntax-type">void</span>*));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📊 Estrutura registro_t: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(<span class="syntax-type">registro_t</span>));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"📦 Buffer[16]: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-keyword">sizeof</span>(buffer));
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+  
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-string">"🎯 RAM livre aproximada: "</span>);
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">print</span>(<span class="syntax-function">freeMemory</span>());
+  <span class="syntax-function">Serial</span>.<span class="syntax-function">println</span>(<span class="syntax-string">" bytes"</span>);
+}
+
+<span class="syntax-comment">// Função para estimar memória livre</span>
+<span class="syntax-type">int</span> <span class="syntax-function">freeMemory</span>() {
+  <span class="syntax-type">char</span> top;
+  <span class="syntax-keyword">return</span> &top - <span class="syntax-function">__brkval</span>;
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <h4>🔧 Montagem no Tinkercad</h4>
+            <p><strong>LEDs:</strong> Conecte 8 LEDs nos pinos digitais 0-7, cada um com resistor de 220Ω para o GND</p>
+            <p><strong>Botões:</strong> Conecte 4 push-buttons nos pinos 8-11, uma perna de cada botão vai para GND, a outra para o pino digital</p>
+            <p><strong>Potenciômetro:</strong> Terminal central no A0, extremos no 5V e GND</p>
+            <p><strong>Serial Monitor:</strong> Use 115200 baud para ver as mensagens de debug</p>
+        </div>
+
+        <div class="highlight-box">
+            <h4>🎓 Conceitos Aprendidos</h4>
+            <p><strong>Registradores:</strong> Controle direto do hardware através de PORTD (LEDs) e PORTB (botões)</p>
+            <p><strong>Operadores Bit-a-bit:</strong> AND, OR, XOR, NOT, deslocamentos para manipulação eficiente</p>
+            <p><strong>Ponteiros:</strong> Acesso direto à memória e registradores para máxima performance</p>
+            <p><strong>Estruturas:</strong> Organização de dados complexos com ponteiros para navegação eficiente</p>
+        </div>
+
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'Copiado!';
+                button.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    button.textContent = 'Copiar';
+                    button.style.background = '#667eea';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
